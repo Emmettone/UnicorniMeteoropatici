@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Unicorni Meteoropatici - Scegli il tuo compagno</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #1a1a1a; color: white; text-align: center; padding: 10px; }
+        .card { background: white; color: #333; padding: 20px; border-radius: 30px; width: 380px; margin: 15px auto; border: 5px solid #e74c3c; transition: 0.3s; }
+        .confirmed { border-color: #2ecc71; box-shadow: 0 0 20px #2ecc71; }
+        
+        .meteo-container { display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .meteo-icon { width: 60px; height: 60px; }
+        .temp-value { font-size: 3rem; font-weight: 900; color: #e74c3c; }
+        
+        .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 400px; margin: 0 auto; }
+        button { padding: 10px; cursor: pointer; font-weight: bold; border-radius: 8px; border: 1px solid #555; background: #333; color: white; }
+        button:hover { background: #444; }
+        button.active { background: #e74c3c; border-color: white; }
+
+        .character-image { width: 280px; height: auto; display: none; margin: 10px auto; border-radius: 15px; }
+        
+        .identikit { background: #f0f2f5; border: 2px solid #ddd; padding: 15px; border-radius: 20px; margin-top: 15px; text-align: left; display: none; }
+        .mood-bubble { background: #2c3e50; color: white; padding: 10px; border-radius: 12px; font-style: italic; margin-bottom: 10px; text-align: center; font-weight: bold; }
+        
+        #btn-conferma { 
+            background: #2ecc71; color: white; border: none; padding: 15px; width: 100%; 
+            border-radius: 15px; font-size: 1.1rem; margin-top: 15px; display: none; cursor: pointer;
+        }
+        #welcome-msg { display: none; font-weight: bold; color: #27ae60; margin-top: 15px; font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+
+    <div id="selector-area">
+        <div class="controls">
+            <button onclick="scegli('goccia', this)">GOCCIA</button>
+            <button onclick="scegli('aureo', this)">AUREO</button>
+            <button onclick="scegli('puff', this)">PUFF</button>
+            <button onclick="scegli('vampa', this)">VAMPA</button>
+            <button onclick="scegli('blakie', this)">BLAKIE</button>
+            <button onclick="scegli('gelo', this)">GELO</button>
+        </div>
+    </div>
+
+    <div class="card" id="main-card">
+        <div style="color: #95a5a6; font-size: 0.8rem; font-weight: bold;">PIOVE DI SACCO</div>
+        <div class="meteo-container">
+            <img id="meteo-icon" src="" class="meteo-icon" style="display:none;">
+            <div class="temp-value" id="display-temp">--°</div>
+        </div>
+        
+        <img id="foto" src="" class="character-image">
+        
+        <div id="info-box" class="identikit">
+            <div id="umore-today" class="mood-bubble"></div>
+            <p><b>❤️ Ama:</b> <span id="ama"></span></p>
+            <p><b>😡 Odia:</b> <span id="odia"></span></p>
+            <p><b>😐 Neutrali:</b> <span id="neutrali"></span></p>
+            
+            <button id="btn-conferma" onclick="conferma()">CONFERMA SCELTA</button>
+        </div>
+        
+        <div id="welcome-msg"></div>
+    </div>
+
+<script>
+    let t = 0, m = '', selectedName = '';
+    const chiave = 'eca827552d285d6fd2783dc704b52c48';
+
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=Piove di Sacco&appid=${chiave}&units=metric&lang=it`)
+        .then(r => r.json()).then(d => {
+            t = Math.round(d.main.temp); m = d.weather[0].main;
+            document.getElementById('display-temp').innerText = t + "°";
+            const iconImg = document.getElementById('meteo-icon');
+            iconImg.src = `https://openweathermap.org/img/wn/${d.weather[0].icon}@2x.png`;
+            iconImg.style.display = "block";
+        });
+
+    const database = {
+        goccia: { ama: "Pioggia e Umidità", odia: "Caldo Secco (>30°)", neutrali: "Neve, Nuvole, Nebbia, Sole", welcome: "Ottima scelta! Teniamoci pronti per il fango!", frasi: { Pioggia: "Godo! Finalmente piove!", CALDO: "Sto evaporando!", Neutrale: "Asciuttissimo..." } },
+        aureo: { ama: "Sole Splendente", odia: "Nebbia", neutrali: "Pioggia, Neve, Nuvole, Freddo", welcome: "Sapevo che avresti scelto il più bello!", frasi: { Sole: "Splendo! Ammiratemi!", Nebbia: "Tragedia! Non mi vedo!", Neutrale: "Luce mediocre." } },
+        puff: { ama: "Nuvole", odia: "Temporali", neutrali: "Sole, Pioggia, Neve, Nebbia", welcome: "Benfatto... ora però non fare rumore, dormiamo.", frasi: { Nuvole: "Morbido... dormo.", Temporale: "Che casino!", Neutrale: "Zzz..." } },
+        vampa: { ama: "Temporali e Caldo (>30°)", odia: "Freddo Intenso (<10°)", neutrali: "Pioggia, Nuvole, Nebbia, Sole", welcome: "SÌ! Sentiamo il bruciore! Andiamo!", frasi: { Temporale: "CARICA ELETTTRICA!", CALDO: "Finalmente si brucia!", FREDDO: "Mi sono spento...", Neutrale: "Giornata piatta." } },
+        blakie: { ama: "Temporali e Nebbia", odia: "Sole diretto", neutrali: "Pioggia, Neve, Nuvole, Freddo", welcome: "Benvenuto nell'oscurità. Restiamo nell'ombra.", frasi: { Nebbia: "Il mio regno.", Temporale: "Fulmini e buio... perfetto.", Sole: "Troppa luce!", Neutrale: "Preferisco il buio." } },
+        gelo: { ama: "Neve e Ghiaccio (<10°)", odia: "Caldo (>30°)", neutrali: "Pioggia, Nuvole, Nebbia, Temporale", welcome: "Freddo è meglio! Prepariamo i ghiaccioli!", frasi: { Neve: "Finalmente si gela!", CALDO: "Aiuto, mi sciolgo!", Neutrale: "Si sta bene..." } }
+    };
+
+    function scegli(nome, btn) {
+        selectedName = nome;
+        // Estetica bottoni
+        document.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        // Reset stato conferma
+        document.getElementById('main-card').classList.remove('confirmed');
+        document.getElementById('welcome-msg').style.display = 'none';
+
+        const char = database[nome];
+        document.getElementById('foto').src = nome + ".png";
+        document.getElementById('foto').style.display = "block";
+        document.getElementById('info-box').style.display = "block";
+        document.getElementById('btn-conferma').style.display = "block";
+
+        let stato = 'Neutrale';
+        if(m === 'Clear') stato = 'Sole';
+        if(m === 'Rain' || m === 'Drizzle') stato = 'Pioggia';
+        if(m === 'Clouds') stato = 'Nuvole';
+        if(m === 'Thunderstorm') stato = 'Temporale';
+        if(m === 'Snow') stato = 'Neve';
+        if(m === 'Mist' || m === 'Fog') stato = 'Nebbia';
+        if(t > 30) stato = 'CALDO';
+        if(t < 10) stato = 'FREDDO';
+
+        document.getElementById('umore-today').innerText = char.frasi[stato] || char.frasi['Neutrale'];
+        document.getElementById('ama').innerText = char.ama;
+        document.getElementById('odia').innerText = char.odia;
+        document.getElementById('neutrali').innerText = char.neutrali;
+    }
+
+    function conferma() {
+        const card = document.getElementById('main-card');
+        const welcome = document.getElementById('welcome-msg');
+        
+        card.classList.add('confirmed');
+        welcome.innerText = database[selectedName].welcome;
+        welcome.style.display = 'block';
+        document.getElementById('btn-conferma').style.display = 'none';
+        
+        alert("Hai scelto " + selectedName.toUpperCase() + "! Ottimo lavoro.");
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Unicorni Meteoropatici - Piove di Sacco</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #121212; color: white; text-align: center; padding: 20px; }
+        .container { max-width: 450px; margin: auto; }
+        
+        /* Box Meteo */
+        .weather-box { background: #1e1e1e; padding: 20px; border-radius: 25px; border: 2px solid #333; margin-bottom: 20px; }
+        .temp { font-size: 3.5rem; font-weight: 900; color: #ff4757; margin: 0; }
+        .desc { text-transform: capitalize; color: #aaa; font-weight: bold; }
+
+        /* Griglia Pulsanti */
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        button { padding: 12px 5px; cursor: pointer; border-radius: 10px; border: none; background: #333; color: white; font-weight: bold; transition: 0.3s; }
+        button.active { background: #ff4757; box-shadow: 0 0 10px #ff4757; }
+
+        /* Scheda Personaggio */
+        .card { background: white; color: #333; padding: 25px; border-radius: 30px; display: none; text-align: left; border: 5px solid transparent; }
+        .card img { width: 100%; border-radius: 15px; margin-bottom: 15px; border: 1px solid #eee; }
+        .mood-bubble { background: #2f3542; color: white; padding: 12px; border-radius: 15px; font-style: italic; margin-bottom: 15px; text-align: center; font-weight: bold; }
+        
+        .traits b { color: #ff4757; text-transform: uppercase; font-size: 0.8rem; display: block; margin-top: 10px; }
+
+        /* Tasto Conferma */
+        #confirm-btn { width: 100%; padding: 15px; background: #2ed573; color: white; border: none; border-radius: 15px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        
+        /* Stato Confermato */
+        .confirmed-style { border-color: #2ed573 !important; box-shadow: 0 0 20px rgba(46, 213, 115, 0.3); }
+        #final-msg { display: none; margin-top: 20px; padding: 15px; background: #2ed573; color: white; border-radius: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="weather-box">
+        <div style="font-size: 0.8rem; color: #777; font-weight: bold;">PIOVE DI SACCO</div>
+        <p id="w-temp" class="temp">--°</p>
+        <div id="w-desc" class="desc">Caricamento...</div>
+    </div>
+
+    <div class="grid">
+        <button onclick="seleziona('goccia', this)">GOCCIA</button>
+        <button onclick="seleziona('aureo', this)">AUREO</button>
+        <button onclick="seleziona('puff', this)">PUFF</button>
+        <button onclick="seleziona('vampa', this)">VAMPA</button>
+        <button onclick="seleziona('blakie', this)">BLAKIE</button>
+        <button onclick="seleziona('gelo', this)">GELO</button>
+    </div>
+
+    <div id="identikit" class="card">
+        <img id="char-img" src="">
+        <div id="char-mood" class="mood-bubble"></div>
+        
+        <div class="traits">
+            <b>❤️ Ama:</b> <span id="char-ama"></span>
+            <b>😡 Odia:</b> <span id="char-odia"></span>
+            <b>😐 Neutrali:</b> <span id="char-neutrali"></span>
+        </div>
+
+        <button id="confirm-btn" onclick="conferma()">CONFERMA SCELTA</button>
+        <div id="final-msg"></div>
+    </div>
+</div>
+
+<script>
+    let t = 0, m = '', selected = '', reaction = 'neutro';
+
+    // Recupero dati OpenWeather
+    fetch('https://api.openweathermap.org/data/2.5/weather?q=Piove di Sacco&appid=eca827552d285d6fd2783dc704b52c48&units=metric&lang=it')
+        .then(r => r.json()).then(d => {
+            t = Math.round(d.main.temp);
+            m = d.weather[0].main;
+            document.getElementById('w-temp').innerText = t + "°";
+            document.getElementById('w-desc').innerText = d.weather[0].description;
+        });
+
+    const db = {
+        goccia: { ama: "Rain", odia: "Clear", info: ["Pioggia", "Sereno", "Nubi, Nebbia, Neve"] },
+        aureo:  { ama: "Clear", odia: "Mist", info: ["Sole", "Nebbia", "Pioggia, Nubi, Neve"] },
+        puff:   { ama: "Clouds", odia: "Thunderstorm", info: ["Nuvole", "Temporale", "Sole, Pioggia, Neve"] },
+        blakie: { ama: "Thunderstorm", odia: "Clear", info: ["Temporale", "Sereno", "Pioggia, Nubi, Nebbia"] },
+        vampa:  { ama: "CALDO", odia: "FREDDO", info: ["> 30°", "< 10°", "Tra 10° e 30°"] },
+        gelo:   { ama: "FREDDO", odia: "CALDO", info: ["< 10°", "> 30°", "Tra 10° e 30°"] }
+    };
+
+    function seleziona(nome, btn) {
+        selected = nome;
+        document.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const u = db[nome];
+        document.getElementById('identikit').style.display = "block";
+        document.getElementById('identikit').classList.remove('confirmed-style');
+        document.getElementById('final-msg').style.display = "none";
+        document.getElementById('confirm-btn').style.display = "block";
+        
+        // Immagine profilo standard (es: goccia.png)
+        document.getElementById('char-img').src = nome + ".png";
+        document.getElementById('char-ama').innerText = u.info[0];
+        document.getElementById('char-odia').innerText = u.info[1];
+        document.getElementById('char-neutrali').innerText = u.info[2];
+
+        // Calcolo reazione
+        reaction = 'neutro';
+        if (nome === 'vampa' || nome === 'gelo') {
+            let tempKey = t > 30 ? 'CALDO' : (t < 10 ? 'FREDDO' : 'OK');
+            if (tempKey === u.ama) reaction = 'felice';
+            else if (tempKey === u.odia) reaction = 'arrabbiato';
+        } else {
+            if (m === u.ama) reaction = 'felice';
+            else if (m === u.odia) reaction = 'arrabbiato';
+        }
+
+        const testi = { felice: "Oggi sono felicissimo!", arrabbiato: "Che tempo orribile, sono furioso!", neutro: "Tempo accettabile, niente di che." };
+        document.getElementById('char-mood').innerText = testi[reaction];
+    }
+
+    function conferma() {
+        // Cambio immagine finale (es: gocciafelice.png)
+        document.getElementById('char-img').src = selected + reaction + ".png";
+        document.getElementById('identikit').classList.add('confirmed-style');
+        document.getElementById('confirm-btn').style.display = "none";
+        document.getElementById('final-msg').innerText = "SCELTA CONFERMATA!";
+        document.getElementById('final-msg').style.display = "block";
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Unicorni Meteoropatici - Meteo Live</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #1a1a1a; color: white; text-align: center; padding: 10px; }
+        .card { background: white; color: #333; padding: 20px; border-radius: 30px; width: 380px; margin: 15px auto; border: 5px solid #e74c3c; box-shadow: 10px 10px 0px #c0392b; }
+        
+        /* Area Meteo */
+        .meteo-container { display: flex; align-items: center; justify-content: center; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .meteo-icon { width: 80px; height: 80px; }
+        .temp-value { font-size: 3.5rem; font-weight: 900; color: #e74c3c; line-height: 1; }
+        .meteo-desc { text-transform: capitalize; color: #7f8c8d; font-weight: bold; font-size: 0.9rem; margin-top: -5px; margin-bottom: 10px; }
+        
+        .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 400px; margin: 0 auto; }
+        button { padding: 12px 5px; cursor: pointer; font-weight: bold; border-radius: 8px; border: 1px solid #555; background: #333; color: white; transition: 0.2s; }
+        button:hover { background: #e74c3c; border-color: white; }
+        
+        .character-image { width: 300px; height: auto; display: none; margin: 10px auto; border-radius: 15px; border: 1px solid #eee; }
+        .identikit { background: #f0f2f5; border: 2px solid #ddd; padding: 15px; border-radius: 20px; margin-top: 15px; text-align: left; font-size: 0.95rem; display: none; }
+        .identikit b { color: #c0392b; text-transform: uppercase; font-size: 0.8rem; }
+        .mood-bubble { background: #2c3e50; color: white; padding: 12px; border-radius: 15px; font-style: italic; margin-bottom: 15px; text-align: center; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <button onclick="scegli('goccia')">GOCCIA</button>
+        <button onclick="scegli('aureo')">AUREO</button>
+        <button onclick="scegli('puff')">PUFF</button>
+        <button onclick="scegli('vampa')">VAMPA</button>
+        <button onclick="scegli('blakie')">BLAKIE</button>
+        <button onclick="scegli('gelo')">GELO</button>
+    </div>
+
+    <div class="card">
+        <div style="color: #95a5a6; font-size: 0.8rem; font-weight: bold;">PIOVE DI SACCO</div>
+        
+        <div class="meteo-container">
+            <img id="meteo-icon" src="" class="meteo-icon" style="display:none;">
+            <div class="temp-value" id="display-temp">--°</div>
+        </div>
+        <div id="meteo-desc" class="meteo-desc">Caricamento...</div>
+        
+        <img id="foto" src="" class="character-image">
+        
+        <div id="info-box" class="identikit">
+            <div id="umore-today" class="mood-bubble"></div>
+            <p><b>❤️ Ama:</b> <br><span id="ama"></span></p>
+            <p><b>😡 Odia:</b> <br><span id="odia"></span></p>
+            <p><b>😐 Neutrali:</b> <br><span id="neutrali"></span></p>
+        </div>
+    </div>
+
+<script>
+    let t = 0;
+    let m = '';
+    const chiave = 'eca827552d285d6fd2783dc704b52c48';
+
+    // Funzione Meteo con Icona
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=Piove di Sacco&appid=${chiave}&units=metric&lang=it`)
+        .then(r => r.json())
+        .then(d => {
+            t = Math.round(d.main.temp);
+            m = d.weather[0].main;
+            const desc = d.weather[0].description;
+            const iconCode = d.weather[0].icon;
+            
+            document.getElementById('display-temp').innerText = t + "°";
+            document.getElementById('meteo-desc').innerText = desc;
+            
+            const iconImg = document.getElementById('meteo-icon');
+            iconImg.src = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+            iconImg.style.display = "block";
+        });
+
+    const database = {
+        goccia: {
+            ama: "Pioggia e Umidità",
+            odia: "Caldo Secco (>30°)",
+            neutrali: "Neve, Nuvole, Nebbia, Sole",
+            frasi: { Pioggia: "Godo! Finalmente piove!", CALDO: "Sto evaporando!", Neutrale: "Troppo asciutto per me." }
+        },
+        aureo: {
+            ama: "Sole Splendente",
+            odia: "Nebbia (oscura la sua bellezza)",
+            neutrali: "Pioggia, Neve, Nuvole, Freddo",
+            frasi: { Sole: "Splendo! Ammiratemi!", Nebbia: "Dov'è il mio riflesso?!", Neutrale: "Luce mediocre oggi." }
+        },
+        puff: {
+            ama: "Nuvole (fanno ombra)",
+            odia: "Temporali (troppo rumore)",
+            neutrali: "Sole, Pioggia, Neve, Nebbia",
+            frasi: { Nuvole: "Morbido... dormo.", Temporale: "Silenzio! Voglio dormire!", Neutrale: "Zzz..." }
+        },
+        vampa: {
+            ama: "Temporali, Fulmini e Caldo (>30°)",
+            odia: "Freddo Intenso (<10°)",
+            neutrali: "Pioggia, Nuvole, Nebbia, Sole",
+            frasi: { Temporale: "CARICA ELETTTRICA!", CALDO: "Sì! Finalmente si brucia!", FREDDO: "Mi sono spento... brrr.", Neutrale: "Giornata piatta." }
+        },
+        blakie: {
+            ama: "Temporali e Nebbia",
+            odia: "Sole diretto (troppa luce)",
+            neutrali: "Pioggia, Neve, Nuvole, Freddo",
+            frasi: { Nebbia: "Il mio regno di mistero.", Temporale: "Oscurità e fulmini... perfetto.", Sole: "I miei occhi! Troppa luce!", Neutrale: "Almeno non è troppo nitido." }
+        },
+        gelo: {
+            ama: "Neve e Ghiaccio (<10°)",
+            odia: "Afa e Caldo (>30°)",
+            neutrali: "Pioggia, Nuvole, Nebbia, Temporale",
+            frasi: { Neve: "Sì! Finalmente si gela!", CALDO: "Aiuto, mi sciolgo!", Neutrale: "Si sta bene, ma vorrei i brividi." }
+        }
+    };
+
+    function scegli(nome) {
+        const char = database[nome];
+        document.getElementById('foto').src = nome + ".png";
+        document.getElementById('foto').style.display = "block";
+        document.getElementById('info-box').style.display = "block";
+
+        let stato = 'Neutrale';
+        if(m === 'Clear') stato = 'Sole';
+        if(m === 'Rain' || m === 'Drizzle') stato = 'Pioggia';
+        if(m === 'Clouds') stato = 'Nuvole';
+        if(m === 'Thunderstorm') stato = 'Temporale';
+        if(m === 'Snow') stato = 'Neve';
+        if(m === 'Mist' || m === 'Fog') stato = 'Nebbia';
+        
+        if(t > 30) stato = 'CALDO';
+        if(t < 10) stato = 'FREDDO';
+
+        document.getElementById('umore-today').innerText = char.frasi[stato] || char.frasi['Neutrale'];
+        document.getElementById('ama').innerText = char.ama;
+        document.getElementById('odia').innerText = char.odia;
+        document.getElementById('neutrali').innerText = char.neutrali;
+    }
+</script>
+</body>
+</html>

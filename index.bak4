@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Unicorni Meteoropatici - Piove di Sacco</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #121212; color: white; text-align: center; padding: 20px; }
+        .container { max-width: 450px; margin: auto; }
+        
+        /* Box Meteo */
+        .weather-box { background: #1e1e1e; padding: 20px; border-radius: 25px; border: 2px solid #333; margin-bottom: 20px; }
+        .weather-info { display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .weather-icon { width: 60px; height: 60px; }
+        .temp { font-size: 3.5rem; font-weight: 900; color: #ff4757; margin: 0; }
+        .desc { text-transform: capitalize; color: #aaa; font-weight: bold; }
+
+        /* Griglia Pulsanti */
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        button { padding: 12px 5px; cursor: pointer; border-radius: 10px; border: none; background: #333; color: white; font-weight: bold; transition: 0.3s; }
+        button.active { background: #ff4757; box-shadow: 0 0 10px #ff4757; }
+
+        /* Scheda Personaggio */
+        .card { background: white; color: #333; padding: 25px; border-radius: 30px; display: none; text-align: left; border: 5px solid transparent; }
+        .card img { width: 100%; border-radius: 15px; margin-bottom: 15px; border: 1px solid #eee; }
+        
+        /* Bolla Sarcasmo (nascosta inizialmente) */
+        .mood-bubble { background: #2f3542; color: white; padding: 12px; border-radius: 15px; font-style: italic; margin-bottom: 15px; text-align: center; font-weight: bold; display: none; }
+        
+        .traits b { color: #ff4757; text-transform: uppercase; font-size: 0.8rem; display: block; margin-top: 10px; }
+
+        /* Tasto Conferma */
+        #confirm-btn { width: 100%; padding: 15px; background: #2ed573; color: white; border: none; border-radius: 15px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        
+        /* Stato Confermato */
+        .confirmed-style { border-color: #2ed573 !important; box-shadow: 0 0 20px rgba(46, 213, 115, 0.3); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="weather-box">
+        <div style="font-size: 0.8rem; color: #777; font-weight: bold;">PIOVE DI SACCO</div>
+        <div class="weather-info">
+            <img id="w-icon" class="weather-icon" src="" style="display:none;">
+            <p id="w-temp" class="temp">--°</p>
+        </div>
+        <div id="w-desc" class="desc">Caricamento...</div>
+    </div>
+
+    <div class="grid">
+        <button onclick="seleziona('goccia', this)">GOCCIA</button>
+        <button onclick="seleziona('aureo', this)">AUREO</button>
+        <button onclick="seleziona('puff', this)">PUFF</button>
+        <button onclick="seleziona('vampa', this)">VAMPA</button>
+        <button onclick="seleziona('blakie', this)">BLAKIE</button>
+        <button onclick="seleziona('gelo', this)">GELO</button>
+    </div>
+
+    <div id="identikit" class="card">
+        <img id="char-img" src="">
+        <div id="char-mood" class="mood-bubble"></div>
+        
+        <div class="traits">
+            <b>❤️ Ama:</b> <span id="char-ama"></span>
+            <b>😡 Odia:</b> <span id="char-odia"></span>
+            <b>😐 Neutrali:</b> <span id="char-neutrali"></span>
+        </div>
+
+        <button id="confirm-btn" onclick="conferma()">CONFERMA SCELTA</button>
+    </div>
+</div>
+
+<script>
+    let t = 0, m = '', selected = '', reaction = 'neutro';
+
+    fetch('https://api.openweathermap.org/data/2.5/weather?q=Piove di Sacco&appid=eca827552d285d6fd2783dc704b52c48&units=metric&lang=it')
+        .then(r => r.json()).then(d => {
+            t = Math.round(d.main.temp);
+            m = d.weather[0].main;
+            document.getElementById('w-temp').innerText = t + "°";
+            document.getElementById('w-desc').innerText = d.weather[0].description;
+            const iconImg = document.getElementById('w-icon');
+            iconImg.src = `https://openweathermap.org/img/wn/${d.weather[0].icon}@2x.png`;
+            iconImg.style.display = "block";
+        });
+
+    const db = {
+        goccia: { ama: "Rain", odia: "Clear", info: ["Pioggia", "Sereno", "Nubi, Nebbia, Neve"],
+                  sarcasmo: { felice: "Oh sì, umidità al 100%. Finalmente la mia pelle sembra quella di una prugna idratata!", 
+                              arrabbiato: "C'è così tanto sole che rischio di diventare un unicorno al forno. Qualcuno mi lanci un secchio d'acqua!", 
+                              neutro: "Né carne né pesce. Ma almeno non sono ancora evaporato." }},
+        aureo:  { ama: "Clear", odia: "Mist", info: ["Sole", "Nebbia", "Pioggia, Nubi, Neve"],
+                  sarcasmo: { felice: "Tutti in ginocchio! Il sole splende quasi quanto il mio corno placcato oro.", 
+                              arrabbiato: "C'è nebbia. Mi state dicendo che il mondo non può ammirarmi oggi? Che spreco di bellezza.", 
+                              neutro: "Luce mediocre per un essere superiore. Mi accontenterò." }},
+        puff:   { ama: "Clouds", odia: "Thunderstorm", info: ["Nuvole", "Temporale", "Sole, Pioggia, Neve"],
+                  sarcasmo: { felice: "Nuvole... morbide come il mio divano. Non svegliatemi fino al 2027.", 
+                              arrabbiato: "Ma questi tuoni? Chi è il maleducato che urla in cielo mentre cerco di dormire?!", 
+                              neutro: "Se non c'è chiasso, posso continuare a fissare il vuoto." }},
+        vampa:  { ama: "CALDO", odia: "FREDDO", info: ["> 30°", "< 10°", "Tra 10° e 30°"],
+                  sarcasmo: { felice: "Aaaah, finalmente si brucia! Sento il grasso che frigge, che meraviglia!", 
+                              arrabbiato: "10 gradi? Seriamente? Sono un unicorno, non un bastoncino Findus!", 
+                              neutro: "Tiepido. In pratica una giornata inutile." }},
+        blakie: { ama: "Thunderstorm", odia: "Clear", info: ["Temporale", "Sereno", "Pioggia, Nubi, Nebbia"],
+                  sarcasmo: { felice: "Oscurità, lampi, caos... mi sento come in un video dei Black Sabbath.", 
+                              arrabbiato: "Togliete quel disco giallo dal cielo! È troppo allegro, mi fa venire il diabete.", 
+                              neutro: "Un grigio accettabile. Meno speranza vedo in giro, meglio sto." }},
+        gelo:   { ama: "FREDDO", odia: "CALDO", info: ["< 10°", "> 30°", "Tra 10° e 30°"],
+                  sarcasmo: { felice: "Gelido. Perfetto per conservare il mio cuore di ghiaccio e i miei ghiaccioli.", 
+                              arrabbiato: "30 gradi? Se inizio a gocciolare, vi denuncio tutti per maltrattamento.", 
+                              neutro: "Non si gela, ma non si suda. Una noia mortale." }}
+    };
+
+    function seleziona(nome, btn) {
+        selected = nome;
+        document.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const u = db[nome];
+        document.getElementById('identikit').style.display = "block";
+        document.getElementById('identikit').classList.remove('confirmed-style');
+        document.getElementById('confirm-btn').style.display = "block";
+        document.getElementById('char-mood').style.display = "none"; // Nascondi sarcasmo
+        
+        document.getElementById('char-img').src = nome + ".png";
+        document.getElementById('char-ama').innerText = u.info[0];
+        document.getElementById('char-odia').innerText = u.info[1];
+        document.getElementById('char-neutrali').innerText = u.info[2];
+
+        // Calcolo reazione silenzioso
+        reaction = 'neutro';
+        if (nome === 'vampa' || nome === 'gelo') {
+            let tempKey = t > 30 ? 'CALDO' : (t < 10 ? 'FREDDO' : 'OK');
+            if (tempKey === u.ama) reaction = 'felice';
+            else if (tempKey === u.odia) reaction = 'arrabbiato';
+        } else {
+            if (m === u.ama) reaction = 'felice';
+            else if (m === u.odia) reaction = 'arrabbiato';
+        }
+    }
+
+    function conferma() {
+        const u = db[selected];
+        // 1. Cambia immagine con reazione
+        document.getElementById('char-img').src = selected + reaction + ".png";
+        // 2. Mostra e imposta frase sarcastica
+        const bubble = document.getElementById('char-mood');
+        bubble.innerText = u.sarcasmo[reaction];
+        bubble.style.display = "block";
+        // 3. Estetica conferma
+        document.getElementById('identikit').classList.add('confirmed-style');
+        document.getElementById('confirm-btn').style.display = "none";
+    }
+</script>
+</body>
+</html>
