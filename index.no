@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Unicorni Meteoropatici - Ally Edition</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            background: #0a0a0a; 
+            color: white; 
+            text-align: center; 
+            padding: 10px; 
+            transition: background 0.8s ease; 
+            margin: 0; 
+            overflow-x: hidden;
+        }
+        .container { max-width: 100%; margin: auto; }
+        
+        /* --- DISCLAIMER MODAL --- */
+        #disclaimer-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.98);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        .disclaimer-modal {
+            background: #1e1e1e;
+            padding: 25px;
+            border-radius: 28px;
+            max-width: 85%;
+            border: 2px solid #ff4757;
+            text-align: left;
+            box-shadow: 0 0 30px rgba(255, 71, 87, 0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .disclaimer-modal h2 { color: #ff4757; margin-top: 0; font-size: 1.3rem; text-transform: uppercase; }
+        .disclaimer-modal p { font-size: 0.85rem; line-height: 1.5; color: #efefef; }
+        .disclaimer-modal ul { padding-left: 18px; font-size: 0.8rem; color: #aaa; margin: 15px 0; }
+        .sarcastic-intro { font-weight: 900; color: #ffa502; margin-bottom: 15px; font-style: italic; }
+        .sarcastic-outro { font-weight: 900; color: #ffa502; margin-top: 15px; font-style: italic; text-align: right; }
+        .legal-notice { font-size: 0.7rem !important; color: #888 !important; border-top: 1px solid #333; padding-top: 15px; margin-top: 15px; font-style: normal; }
+        #accept-disclaimer { width: 100%; padding: 15px; background: #ff4757; color: white; border: none; border-radius: 15px; font-weight: 900; cursor: pointer; font-size: 1rem; margin-top: 10px; }
+
+        /* --- APP STYLES --- */
+        .app-title { font-size: 1.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin: 10px 0 20px 0; background: linear-gradient(to right, #ff4757, #ffa502); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .weather-box { background: linear-gradient(145deg, #1e1e1e, #111111); padding: 15px 10px; border-radius: 28px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+        .location { font-size: 0.8rem; color: #ff4757; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; margin: 0; line-height: 1; }
+        .main-weather { display: flex; align-items: center; justify-content: center; margin: -5px 0; }
+        .weather-icon-main { width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; }
+        .weather-icon-main svg { width: 85px; height: 85px; }
+        .temp { font-size: 6.5rem; font-weight: 900; letter-spacing: -6px; margin: 0; line-height: 0.9; }
+        .desc { text-transform: capitalize; color: #efefef; font-size: 1.3rem; font-weight: 600; margin: -10px 0 15px 0; }
+        .details-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; background: rgba(255,255,255,0.03); border-radius: 20px; padding: 12px 5px; }
+        .detail-item { font-size: 0.7rem; color: #777; text-transform: uppercase; font-weight: 800; }
+        .detail-item svg { width: 22px; height: 22px; margin-bottom: 5px; display: block; margin: 0 auto 5px; }
+        .detail-item b { display: block; color: #fff; font-size: 1.1rem; margin-top: 2px; }
+        .selection-label { font-size: 0.9rem; font-weight: 700; color: #aaa; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
+        button { padding: 15px 5px; cursor: pointer; border-radius: 14px; border: none; background: #222; color: white; font-weight: bold; font-size: 0.75rem; transition: 0.3s; }
+        button.active { background: #ff4757; box-shadow: 0 4px 15px rgba(255,71,87,0.4); }
+        
+        .card { background: white; color: #333; padding: 20px; border-radius: 28px; display: none; text-align: left; border: 6px solid transparent; box-sizing: border-box; margin-top: 10px; }
+        .card img { width: 100%; border-radius: 18px; margin-bottom: 15px; }
+        
+        .preferences-list { margin-bottom: 15px; padding: 0; list-style: none; }
+        .preferences-list li { display: flex; align-items: center; font-size: 0.95rem; margin-bottom: 12px; font-weight: 600; line-height: 1.4; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+        .preferences-list li span { font-size: 1.3rem; margin-right: 12px; flex-shrink: 0; width: 25px; text-align: center; }
+        .label-pref { min-width: 70px; display: inline-block; color: #666; }
+        .value-pref { color: #333; flex-grow: 1; padding-left: 5px; }
+
+        .char-bio { font-size: 0.85rem; color: #555; line-height: 1.4; margin-bottom: 20px; font-style: italic; border-left: 3px solid #ff4757; padding-left: 10px; }
+
+        .mood-bubble { background: #1e272e; color: white; padding: 15px; border-radius: 20px; font-style: italic; margin-bottom: 15px; text-align: center; font-weight: bold; line-height: 1.4; display: none; }
+        #confirm-btn { width: 100%; padding: 18px; background: #2ed573; color: white; border: none; border-radius: 20px; font-size: 1.1rem; font-weight: bold; }
+        
+        .bg-felice { background: #002b16 !important; }
+        .bg-arrabbiato { background: #3d0000 !important; }
+        .bg-neutro { background: #1a1a2e !important; }
+        .border-felice { border-color: #2ed573 !important; }
+        .border-arrabbiato { border-color: #ff4757 !important; }
+    </style>
+</head>
+<body>
+
+<div id="disclaimer-overlay">
+    <div class="disclaimer-modal">
+        <p class="sarcastic-intro">"Entra pure, ma non aspettarti che ci importi qualcosa dei tuoi sentimenti o della tua messa in piega."</p>
+        <h2>⚠️ AVVISO E LIMITAZIONE DI RESPONSABILITÀ</h2>
+        <p>Questa applicazione utilizza un linguaggio satirico e volutamente provocatorio. I contenuti generati sono da intendersi esclusivamente a scopo di intrattenimento.</p>
+        <ul>
+            <li>Le opinioni espresse dai personaggi sono fittizie.</li>
+            <li>L'ironia contenuta non riflette il pensiero dello sviluppatore verso individui o gruppi reali.</li>
+            <li>È vietato l'uso dei contenuti per scopi di incitamento all'odio o discriminazione.</li>
+        </ul>
+        <p class="legal-notice">
+            <b>TERMINI LEGALI:</b> L'utente dichiara di aver compreso la natura ludica dell'opera. Lo sviluppatore declina ogni responsabilità per danni derivanti dall'uso improprio dell'applicazione. I testi hanno finalità umoristiche e non intendono offendere la sensibilità di alcuno.
+        </p>
+        <p class="sarcastic-outro">"Cliccando qui sotto ammetti di avere abbastanza autoironia per sopravvivere. Forse."</p>
+        <button id="accept-disclaimer" onclick="accettaDisclaimer()">DICHIARO DI AVER COMPRESO</button>
+    </div>
+</div>
+
+<div class="container">
+    <h1 class="app-title">Unicorni Meteoropatici</h1>
+    <div class="weather-box">
+        <div class="location">Piove di Sacco</div>
+        <div class="main-weather">
+            <div id="icon-main" class="weather-icon-main"></div>
+            <p id="w-temp" class="temp">--°</p>
+        </div>
+        <div id="w-desc" class="desc">...</div>
+        <div class="details-grid">
+            <div class="detail-item">
+                <svg viewBox="0 0 24 24" style="fill: #ff7f50;"><path d="M15,13V5A3,3 0 0,0 12,2A3,3 0 0,0 9,5V13A5,5 0 1,0 15,13M12,4A1,1 0 0,1 13,5V8H11V5A1,1 0 0,1 12,4Z"/></svg>
+                RealFeel<b id="w-feels">--°</b>
+            </div>
+            <div class="detail-item">
+                <svg viewBox="0 0 24 24" style="fill: #3498db;"><path d="M12,20A6,6 0 0,1 6,14C6,10 12,3.25 12,3.25C12,3.25 18,10 18,14A6,6 0 0,1 12,20M12,5.75L10,8.5C10,8.5 7.5,12 7.5,14A4.5,4.5 0 0,0 12,18.5A4.5,4.5 0 0,0 16.5,14C16.5,12 14,8.5 14,8.5L12,5.75Z"/></svg>
+                Umidità<b id="w-hum">--%</b>
+            </div>
+            <div class="detail-item">
+                <svg viewBox="0 0 24 24" style="fill: #1abc9c;"><path d="M13,16H18V18H13V16M11,10H14V12H11V10M2,12H4V10H2V12M2,16H10V14H2V16M21,12H11V10H21V12M21,8H11V6H21V8M2,8H10V6H2V8Z"/></svg>
+                Vento<b id="w-wind">-- km/h</b>
+            </div>
+        </div>
+    </div>
+    
+    <div class="selection-label">Chi è il tuo complice?</div>
+    <div class="grid">
+        <button onclick="seleziona('goccia', this)">Goccia</button>
+        <button onclick="seleziona('aureo', this)">Aureo</button>
+        <button onclick="seleziona('puff', this)">Puff</button>
+        <button onclick="seleziona('vampa', this)">Vampa</button>
+        <button onclick="seleziona('blakie', this)">Blakie</button>
+        <button onclick="seleziona('gelo', this)">Gelo</button>
+    </div>
+
+    <div id="identikit" class="card">
+        <img id="char-img" src="">
+        <ul id="char-prefs" class="preferences-list"></ul>
+        <div id="char-info" class="char-bio"></div>
+        <div id="char-mood" class="mood-bubble"></div>
+        <button id="confirm-btn" onclick="conferma()">SCELGO TE</button>
+    </div>
+</div>
+
+<script>
+    let t = 0, m = '', dText = '', selected = '', reaction = 'neutro';
+    const condizioniTutte = ["Sole", "Pioggia", "Nuvole", "Temporali", "Nebbia", "Caldo Torrido", "Freddo Artico"];
+
+    const db = {
+        goccia: { 
+            bio: "Il feticista del fango. Vive per il momento in cui l'umidità distrugge le messe in piega costose e trasforma i marciapiedi in piste di pattinaggio per poveracci.",
+            likes: ["Pioggia"], hates: ["Sole"],
+            sarcasmo: {
+                felice: () => ["Piove. Guarda quegli idioti che corrono con le buste della spesa sulla testa. Noi invece restiamo qui a goderci lo spettacolo dell'annegamento collettivo.", "Finalmente piove. Vedere la gente con le scarpe fradicie mi ridona la vita, a te no?", "Umidità alle stelle! Sento già le lamentele dei rammolliti che non capiscono la vita."],
+                arrabbiato: () => ["C'è il sole. Sento già il rumore delle risate dei bambini e il profumo di bucato steso. Che nausea, qualcuno mi porti un secchio d'acqua sporca.", "Tutti fuori a passeggiare come pecore al sole. Che noia infinita.", "Chi sorride oggi merita di restare a secco. Noi aspettiamo il diluvio."],
+                neutro: () => ["Cielo incerto. Praticamente la versione meteo di un 'forse' detto da uno che non ha palle. Che noia, io voglio vedere le pozzanghere.", "Tempo inutile. Aspettiamo il fango. Intanto guardiamo gli altri con il dovuto distacco.", "Giornata piatta. Ideale per guardare i passanti e capire quanto siamo superiori."]
+            }
+        },
+        aureo:  { 
+            bio: "Il narcisista solare. Crede che ogni raggio di sole sia un riflettore puntato esclusivamente sulla sua superiorità. Considera la nebbia un insulto personale.",
+            likes: ["Sole"], hates: ["Nebbia"],
+            sarcasmo: {
+                felice: () => ["Luce divina! Finalmente il mondo può ammirarci senza quel fastidioso grigiore che tanto piace alla gente mediocre. Abbagliamoli tutti.", "Che luce! Guarda chi gira con l'ombrello per paura di due raggi. Deboli e limitati.", "Oggi siamo radiosi. Gli altri sono solo ombre fastidiose sullo sfondo."],
+                arrabbiato: () => ["Nebbia. Sembra che qualcuno abbia spruzzato deodorante economico su tutto il quartiere. Non vedo nulla, specialmente il motivo per cui sei ancora qui.", "Chi ha spento la luce? Sicuramente qualche tipo deprimente che odia la nostra energia.", "Ridatemi il mio regno. Questo vapore mi offende quasi quanto la banalità della gente."],
+                neutro: () => ["Luce filtrata. È come guardare la TV con la luminosità al minimo perché non puoi permetterti la bolletta. Triste, proprio come te.", "Poteva esserci più sole, ma la natura oggi è pigra come la massa.", "Non brilla nulla oggi. Tranne noi due, ovviamente."]
+            }
+        },
+        vampa:  { 
+            bio: "Il piromane del meteo. Il suo sogno è vedere l'asfalto sciogliersi insieme alle speranze di chiunque abbia un condizionatore rotto.",
+            likes: ["Caldo Torrido"], hates: ["Freddo Artico"],
+            sarcasmo: {
+                felice: () => ["Si schiatta! Sento il rumore dei neuroni della gente che frigge sotto il sole. Magnifico, adoro l'odore di sudore e disperazione al mattino.", "Afa meravigliosa. Vedere gli altri sudare per un metro di strada è il nostro sport preferito.", "Finalmente si schiatta. Chissà quanti amanti del gelo stanno piangendo lì fuori."],
+                arrabbiato: () => ["15 gradi? Chi ha lasciato aperto il freezer del reparto surgelati? Sento i brividi, e non sono quelli che mi dai tu con la tua banalità.", "Sento gente dire 'che bel freschetto'. Spero che si congelino la lingua.", "Odio dovermi coprire come un passante qualunque. Questo meteo è per deboli."],
+                neutro: () => ["Temperatura tiepida. Il meteo perfetto per chi non sa cosa vuole dalla vita. Se non brucia, che senso ha?", "Tiepido. Che parola disgustosa. Noi vogliamo vederli bruciare!", "Giornata inutile. Aspettiamo che l'asfalto faccia soffrire tutti gli altri."]
+            }
+        },
+        gelo:   { 
+            bio: "L'estremista del freezer. Vorrebbe vivere in un mondo dove l'unico modo per salutarsi è sbattere i denti. Odia l'estate perché 'fa uscire troppa gente dai buchi'.",
+            likes: ["Freddo Artico"], hates: ["Caldo Torrido"],
+            sarcasmo: {
+                felice: () => ["Gelo siderale. Finalmente le zanzare sono morte e gli amanti della tintarella sono rintanati a piangere sotto il piumone. Il silenzio dei ghiacci è poesia.", "Aria che taglia la faccia. Guarda quei deboli con mille sciarpe. Ridicoli ai nostri occhi.", "Vento polare! Finalmente un po' di pulizia tra i tipi che non la pensano come noi."],
+                arrabbiato: () => ["Fa caldo. Sento la puzza di crema solare e ottimismo estivo da qui. Vorrei un iceberg da tirare in faccia a chiunque sorrida oggi.", "Si suda. Che umiliazione biologica. Chi ha inventato l'estate non ci conosceva.", "Bruciate tutti. Noi vogliamo solo la neve e il silenzio totale degli altri."],
+                neutro: () => ["Fresco. Ma non abbastanza da far diventare blu le dita dei passanti. Peccato, speravo in qualche amputazione da congelamento.", "Non è abbastanza freddo per vederli battere i denti. Peccato, vero?", "Aspettiamo la bufera. Questo piattume altrui mi urta i nervi."]
+            }
+        },
+        puff: { 
+            bio: "L'ambasciatore dell'apatia. Ama le nuvole piatte perché rendono il mondo un posto meno vibrante e più simile a una sala d'attesa delle poste.",
+            likes: ["Nuvole"], hates: ["Temporali"],
+            sarcasmo: { 
+                felice: () => ["Tutto grigio topo. Una giornata monotona, piatta e deprimente. Praticamente è lo specchio della tua vita sociale.", "Niente ombre. La realtà è piatta e noiosa, proprio come gli altri là fuori.", "Cielo coperto. Almeno non dobbiamo vedere facce troppo allegre per strada."], 
+                arrabbiato: () => ["Tuoni e fulmini. Che bisogno c'è di gridare? Questi temporali sono esibizionisti quanto quelli che pubblicano le foto della cena sui social.", "Rumore inutile. Smettetela, state disturbando la nostra quiete.", "Acqua a catinelle. Spero che gli amanti del dramma si bagnino tutti i vestiti."], 
+                neutro: () => ["Cielo indeciso. Un po' come la tua capacità di prendere una posizione. Restiamo qui a fissare il vuoto, è la cosa più sensata da fare.", "Meteo banale. Come una conversazione con una persona normale.", "Aspettiamo che il sole sparisca. Per sempre, così gli altri piangeranno."] 
+            } 
+        },
+        blakie: { 
+            bio: "L'anarchico delle saette. Gode quando il cielo esplode perché spera sempre che un fulmine colpisca il ripetitore della TV durante la finale di Sanremo.",
+            likes: ["Temporali"], hates: ["Sole"],
+            sarcasmo: { 
+                felice: () => ["Boom! Senti che botto? Spero che sia saltata la corrente a tutto il vicinato. Il caos è l'unica cosa che ci fa sentire vivi, vero?", "Amo vederli correre al riparo come formiche impazzite. Caos delizioso!", "Oscurità e rumore. Il meteo perfetto per vederli tutti terrorizzati."], 
+                arrabbiato: () => ["Cielo azzurro e uccellini che cantano. Mi viene voglia di prendere un fucile a tappi. Questo sereno è un'offesa alla mia dignità.", "Odio l'allegria solare. È una noia collettiva insopportabile per noi.", "Ridatemi la tempesta. Questo azzurro è un insulto a chi ha stile."], 
+                neutro: () => ["Calma piatta. Non si muove una foglia, non esplode nulla. Che delusione, oggi il mondo ha deciso di annoiarmi a morte.", "Meteo per gente tranquilla. E noi odiamo la tranquillità degli altri.", "Aspettiamo il tuono. Intanto critichiamo chiunque osi passarci davanti."] 
+            } 
+        }
+    };
+
+    function setCustomIcon(meteo) {
+        const container = document.getElementById('icon-main');
+        const icone = {
+            'Clear': `<svg viewBox="0 0 24 24"><path fill="#f1c40f" d="M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7M12,2L14.39,5.42L18.42,4.38L17.38,8.41L20.81,10.81L17.38,13.21L18.42,17.24L14.39,16.2L12,19.61L9.61,16.2L5.58,17.24L6.62,13.21L3.19,10.81L6.62,8.41L5.58,4.38L9.61,5.42L12,2Z"/></svg>`,
+            'Clouds': `<svg viewBox="0 0 24 24"><path fill="#ecf0f1" d="M19.35,10.03C18.67,6.59 15.64,4 12,4C9.11,4 6.6,5.64 5.35,8.03C2.34,8.36 0,10.9 0,14A6,6 0 0,0 6,20H19A5,5 0 0,0 24,15C24,12.36 21.95,10.22 19.35,10.03Z"/></svg>`,
+            'Rain': `<svg viewBox="0 0 24 24"><path fill="#3498db" d="M12,2L4.5,20.29L5.21,21L12,18L18.79,21L19.5,20.29L12,2Z"/></svg>`,
+            'Thunderstorm': `<svg viewBox="0 0 24 24"><path fill="#f1c40f" d="M7,2V13H10V22L17,10H13L17,2H7Z"/></svg>`,
+            'Mist': `<svg viewBox="0 0 24 24"><path fill="#95a5a6" d="M3,15H21V13H3V15M3,19H21V17H3V19M3,11H21V9H3V11M3,5V7H21V5H3Z"/></svg>`
+        };
+        container.innerHTML = icone[meteo] || icone['Clouds'];
+    }
+
+    fetch('https://api.openweathermap.org/data/2.5/weather?q=Piove di Sacco&appid=eca827552d285d6fd2783dc704b52c48&units=metric&lang=it')
+        .then(r => r.json()).then(d => {
+            t = Math.round(d.main.temp);
+            m = d.weather[0].main;
+            dText = d.weather[0].description;
+            document.getElementById('w-temp').innerText = t + "°";
+            document.getElementById('w-desc').innerText = dText;
+            document.getElementById('w-feels').innerText = Math.round(d.main.feels_like) + "°";
+            document.getElementById('w-hum').innerText = d.main.humidity + "%";
+            document.getElementById('w-wind').innerText = Math.round(d.wind.speed * 3.6) + " km/h";
+            setCustomIcon(m);
+            
+            const savedHero = localStorage.getItem('mioUnicorno');
+            if (savedHero) {
+                const btns = document.querySelectorAll('.grid button');
+                btns.forEach(b => { if(b.innerText.toLowerCase() === savedHero) seleziona(savedHero, b); });
+                if (localStorage.getItem('confermato') === 'true') conferma();
+            }
+        });
+
+    window.addEventListener('load', () => {
+        document.getElementById('disclaimer-overlay').style.display = 'flex';
+    });
+
+    function accettaDisclaimer() {
+        document.getElementById('disclaimer-overlay').style.display = 'none';
+    }
+
+    function seleziona(nome, btn) {
+        selected = nome;
+        localStorage.setItem('mioUnicorno', nome);
+        localStorage.setItem('confermato', 'false'); 
+        document.body.className = '';
+        document.querySelectorAll('.grid button').forEach(b => b.classList.remove('active'));
+        if(btn) btn.classList.add('active');
+        document.getElementById('identikit').style.display = "block";
+        document.getElementById('char-img').src = nome + ".png";
+        const u = db[nome];
+        const indifferenti = condizioniTutte.filter(c => !u.likes.includes(c) && !u.hates.includes(c));
+        
+        document.getElementById('char-prefs').innerHTML = `
+            <li><span>😍</span> <b class="label-pref">Amo :</b> <span class="value-pref">${u.likes.join(', ')}</span></li>
+            <li><span>😐</span> <b class="label-pref">Neutro :</b> <span class="value-pref">${indifferenti.join(', ')}</span></li>
+            <li><span>😡</span> <b class="label-pref">Odio :</b> <span class="value-pref">${u.hates.join(', ')}</span></li>
+        `;
+        
+        document.getElementById('char-info').innerText = u.bio;
+        document.getElementById('char-info').style.display = "block";
+        document.getElementById('char-prefs').style.display = "block";
+        document.getElementById('char-mood').style.display = "none";
+        document.getElementById('confirm-btn').style.display = "block";
+
+        reaction = 'neutro';
+        if(nome === 'vampa') reaction = t > 25 ? 'felice' : (t < 15 ? 'arrabbiato' : 'neutro');
+        else if(nome === 'gelo') reaction = t < 10 ? 'felice' : (t > 20 ? 'arrabbiato' : 'neutro');
+        else if(nome === 'goccia') reaction = m === 'Rain' ? 'felice' : (m === 'Clear' ? 'arrabbiato' : 'neutro');
+        else if(nome === 'aureo') reaction = m === 'Clear' ? 'felice' : (m === 'Mist' ? 'arrabbiato' : 'neutro');
+        else if(nome === 'puff') reaction = m === 'Clouds' ? 'felice' : (m === 'Thunderstorm' ? 'arrabbiato' : 'neutro');
+        else if(nome === 'blakie') reaction = m === 'Thunderstorm' ? 'felice' : (m === 'Clear' ? 'arrabbiato' : 'neutro');
+    }
+
+    function conferma() {
+        localStorage.setItem('confermato', 'true');
+        document.getElementById('char-img').src = selected + reaction + ".png";
+        document.body.className = 'bg-' + reaction;
+        document.getElementById('identikit').className = 'card border-' + reaction;
+        
+        document.getElementById('char-prefs').style.display = "none";
+        document.getElementById('char-info').style.display = "none";
+        
+        const bubble = document.getElementById('char-mood');
+        const frasi = db[selected].sarcasmo[reaction]();
+        bubble.innerText = frasi[Math.floor(Math.random() * frasi.length)];
+        bubble.style.display = "block";
+        document.getElementById('confirm-btn').style.display = "none";
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+</script>
+</body>
+</html>
