@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Unicorni Meteoropatici - Ally Edition</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            background: #0a0a0a; 
+            color: white; 
+            text-align: center; 
+            padding: 10px; 
+            transition: background 0.8s ease; 
+            margin: 0; 
+            overflow-x: hidden;
+        }
+        .container { max-width: 100%; margin: auto; }
+        
+        /* --- DISCLAIMER MODAL --- */
+        #disclaimer-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.98);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        .disclaimer-modal {
+            background: #1e1e1e;
+            padding: 25px;
+            border-radius: 28px;
+            max-width: 85%;
+            border: 2px solid #ff4757;
+            text-align: left;
+            box-shadow: 0 0 30px rgba(255, 71, 87, 0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .disclaimer-modal h2 { color: #ff4757; margin-top: 0; font-size: 1.3rem; text-transform: uppercase; }
+        .disclaimer-modal p { font-size: 0.85rem; line-height: 1.5; color: #efefef; }
+        .disclaimer-modal ul { padding-left: 18px; font-size: 0.8rem; color: #aaa; margin: 15px 0; }
+        .legal-notice { font-size: 0.7rem !important; color: #888 !important; border-top: 1px solid #333; padding-top: 15px; margin-top: 15px; font-style: normal; }
+        #accept-disclaimer { width: 100%; padding: 15px; background: #ff4757; color: white; border: none; border-radius: 15px; font-weight: 900; cursor: pointer; font-size: 1rem; margin-top: 10px; }
+
+        /* --- APP STYLES --- */
+        .app-title { font-size: 1.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin: 10px 0 20px 0; background: linear-gradient(to right, #ff4757, #ffa502); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .weather-box { background: linear-gradient(145deg, #1e1e1e, #111111); padding: 15px 10px; border-radius: 28px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+        .location { font-size: 0.8rem; color: #ff4757; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; margin: 0; line-height: 1; }
+        .main-weather { display: flex; align-items: center; justify-content: center; margin: -5px 0; }
+        .weather-icon-main { width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; }
+        .weather-icon-main svg { width: 85px; height: 85px; }
+        .temp { font-size: 6.5rem; font-weight: 900; letter-spacing: -6px; margin: 0; line-height: 0.9; }
+        .desc { text-transform: capitalize; color: #efefef; font-size: 1.3rem; font-weight: 600; margin: -10px 0 15px 0; }
+        .details-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; background: rgba(255,255,255,0.03); border-radius: 20px; padding: 12px 5px; }
+        .detail-item { font-size: 0.7rem; color: #777; text-transform: uppercase; font-weight: 800; }
+        .detail-item svg { width: 22px; height: 22px; margin-bottom: 5px; display: block; margin: 0 auto 5px; }
+        .detail-item b { display: block; color: #fff; font-size: 1.1rem; margin-top: 2px; }
+        .selection-label { font-size: 0.9rem; font-weight: 700; color: #aaa; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
+        button { padding: 15px 5px; cursor: pointer; border-radius: 14px; border: none; background: #222; color: white; font-weight: bold; font-size: 0.75rem; transition: 0.3s; }
+        button.active { background: #ff4757; box-shadow: 0 4px 15px rgba(255,71,87,0.4); }
+        
+        .card { background: white; color: #333; padding: 20px; border-radius: 28px; display: none; text-align: left; border: 6px solid transparent; box-sizing: border-box; margin-top: 10px; }
+        .card img { width: 100%; border-radius: 18px; margin-bottom: 15px; }
+        
+        .preferences-list { margin-bottom: 15px; padding: 0; list-style: none; }
+        .preferences-list li { display: flex; align-items: center; font-size: 0.9rem; margin-bottom: 10px; font-weight: 600; line-height: 1.4; border-bottom: 1px solid #eee; padding-bottom: 6px; }
+        .preferences-list li span { font-size: 1.2rem; margin-right: 10px; flex-shrink: 0; width: 25px; text-align: center; }
+        .label-pref { min-width: 60px; display: inline-block; color: #666; }
+        .value-pref { color: #333; flex-grow: 1; padding-left: 5px; }
+
+        .char-description { background: #f8f9fa; border-radius: 15px; padding: 15px; margin-bottom: 20px; border-left: 5px solid #ff4757; font-size: 0.9rem; line-height: 1.4; color: #444; font-style: italic; }
+
+        .mood-bubble { background: #1e272e; color: white; padding: 15px; border-radius: 20px; font-style: italic; margin-bottom: 15px; text-align: center; font-weight: bold; line-height: 1.4; display: none; }
+        #confirm-btn { width: 100%; padding: 18px; background: #2ed573; color: white; border: none; border-radius: 20px; font-size: 1.1rem; font-weight: bold; }
+        
+        .bg-ama { background: #002b16 !important; }
+        .bg-gradisce { background: #003d2e !important; }
+        .bg-neutro { background: #1a1a2e !important; }
+        .bg-nongradisce { background: #3d2600 !important; }
+        .bg-odia { background: #3d0000 !important; }
+
+        .border-ama { border-color: #2ed573 !important; }
+        .border-gradisce { border-color: #1abc9c !important; }
+        .border-neutro { border-color: #3498db !important; }
+        .border-nongradisce { border-color: #ffa502 !important; }
+        .border-odia { border-color: #ff4757 !important; }
+    </style>
+</head>
+<body>
+
+<div id="disclaimer-overlay">
+    <div class="disclaimer-modal">
+        <p style="font-style: italic; color: #ffa502; margin-bottom: 10px;">* Entra a tuo rischio e pericolo: la sensibilità non è inclusa nel pacchetto. *</p>
+        <h2>⚠️ CLAUSOLA DI ESCLUSIONE DI RESPONSABILITÀ</h2>
+        <p>Questa applicazione ha finalità puramente ludiche e satiriche. Accedendo, l'utente accetta i seguenti termini:</p>
+        <ul>
+            <li><b>Sarcasmo Estremo:</b> I contenuti utilizzano un registro satirico senza filtri applicato a ogni ambito del sensibile.</li>
+            <li><b>Assenza di Opinione:</b> Ogni espressione provocatoria, iperbolica o cinica non costituisce l'opinione dello sviluppatore né intende diffamare, offendere o incitare all'odio verso individui, fedi, orientamenti o istituzioni.</li>
+            <li><b>Manleva Totale:</b> L'utente dichiara di possedere il distacco emotivo necessario e solleva lo sviluppatore da ogni responsabilità per urti alla sensibilità personale.</li>
+        </ul>
+        <p class="legal-notice">
+            <b>LIMITAZIONE LEGALE:</b> L'utente rinuncia irrevocabilmente a qualsiasi azione civile o penale. La natura dell'opera è di finzione caricaturale: qualsiasi riferimento a realtà, persone, credi o fatti esistenti è da considerarsi esclusivamente a scopo parodistico.
+        </p>
+        <p style="font-style: italic; color: #ffa502; margin-top: 15px; margin-bottom: 10px; font-size: 0.85rem;">* Se qualcuno si sente offeso, probabilmente ha ragione, ma non ci interessa. *</p>
+        <button id="accept-disclaimer" onclick="accettaDisclaimer()">DICHIARO DI AVER COMPRESO</button>
+    </div>
+</div>
+
+<div class="container">
+    <h1 class="app-title">Unicorni Meteoropatici</h1>
+    <div class="weather-box">
+        <div class="location">Piove di Sacco</div>
+        <div class="main-weather">
+            <div id="icon-main" class="weather-icon-main"></div>
+            <p id="w-temp" class="temp">--°</p>
+        </div>
+        <div id="w-desc" class="desc">...</div>
+     
+        <div class="details-grid">
+            <div class="detail-item">
+                <svg viewBox="0 0 24 24" style="fill: #ff7f50;"><path d="M15,13V5A3,3 0 0,0 12,2A3,3 0 0,0 9,5V13A5,5 0 1,0 15,13M12,4A1,1 0 0,1 13,5V8H11V5A1,1 0 0,1 12,4Z"/></svg>
+                RealFeel<b id="w-feels">--°</b>
+            </div>
+            <div class="detail-item">
+                 <svg viewBox="0 0 24 24" style="fill: #3498db;"><path d="M12,20A6,6 0 0,1 6,14C6,10 12,3.25 12,3.25C12,3.25 18,10 18,14A6,6 0 0,1 12,20M12,5.75L10,8.5C10,8.5 7.5,12 7.5,14A4.5,4.5 0 0,0 12,18.5A4.5,4.5 0 0,0 16.5,14C16.5,12 14,8.5 14,8.5L12,5.75Z"/></svg>
+                Umidità<b id="w-hum">--%</b>
+            </div>
+            <div class="detail-item">
+                <svg viewBox="0 0 24 24" style="fill: #1abc9c;"><path d="M13,16H18V18H13V16M11,10H14V12H11V10M2,12H4V10H2V12M2,16H10V14H2V16M21,12H11V10H21V12M21,8H11V6H21V8M2,8H10V6H2V8Z"/></svg>
+                Vento<b id="w-wind">-- km/h</b>
+            </div>
+        </div>
+    </div>
+    
+    <div class="selection-label">Chi è il tuo complice?</div>
+    <div class="grid">
+        <button onclick="seleziona('goccia', this)">Goccia</button>
+        <button onclick="seleziona('aureo', this)">Aureo</button>
+        <button onclick="seleziona('puff', this)">Puff</button>
+        <button onclick="seleziona('vampa', this)">Vampa</button>
+        <button onclick="seleziona('blakie', this)">Blakie</button>
+        <button onclick="seleziona('gelo', this)">Gelo</button>
+        <button onclick="seleziona('brina', this)">Brina</button>
+        <button onclick="seleziona('dusty', this)">Dusty</button>
+    </div>
+
+    <div id="identikit" class="card">
+        <img id="char-img" src="">
+        <ul id="char-prefs" class="preferences-list"></ul>
+        <div id="char-bio" class="char-description"></div>
+        <div id="char-mood" class="mood-bubble"></div>
+        <button id="confirm-btn" onclick="conferma()">SCELGO TE</button>
+    </div>
+</div>
+
+<script>
+    let t = 0, m = '', dText = '', selected = '', reaction = 'neutro';
+    const condizioniTutte = ["Sole", "Pioggia", "Pioggerella", "Nuvole", "Temporali", "Nebbia", "Caldo Torrido", "Freddo Artico", "Neve", "Umido", "Vento"];
+    
+    const db = {
+        goccia: { 
+            bio: "Goccia non è depressa, è solo idratata dal cinismo. Considera il sole un riflettore troppo potente puntato sui difetti dell'umanità.",
+            ama: "Pioggia", gradisce: "Pioggerella", nongradisce: "Nuvole", odia: "Sole",
+            sarcasmo: {
+                ama: () => ["Finalmente piove. Guarda quegli idioti che corrono.", "Umidità alle stelle! Sento già le lamentele dei rammolliti.", "Vedere la gente con le scarpe fradicie mi ridona la vita.", "Senti che musica il fango? È la nostra sinfonia.", "Diluvia. Il momento perfetto per guardare i vicini che imprecano.", "Amo quando il mondo diventa una pozzanghera gigante.", "C'è chi lo chiama brutto tempo, noi la chiamiamo selezione naturale.", "Acqua a catinelle. Scommetto che qualcuno ha appena steso il bucato.", "Piove così forte che non vedo i loro sorrisi. Finalmente pace.", "Il cielo piange per la stupidità umana, e noi ridiamo."],
+                gradisce: () => ["Pioviggina. È un inizio incoraggiante per rovinare la giornata a qualcuno.", "L'umidità sale, sento i capelli della gente arricciarsi di rabbia.", "C'è quel grigio bagnato che mi scalda il cuore di pietra.", "Ottimo, le pozzanghere iniziano a formarsi.", "La pioggerella è come il mio sarcasmo: sottile e fastidiosa.", "Si respira meglio quando l'aria è intrisa d'acqua.", "Cielo promettente. Speriamo continui così.", "Un velo d'acqua per nascondere la bruttezza del mondo.", "Finalmente la polvere dell'ottimismo viene lavata via.", "Bagnaticcio. Il mio stato d'animo preferito."],
+                neutro: () => ["Nebbia o foschia? Indifferente, basta che non ci sia luce.", "Temperatura mite, l'ideale per non provare emozioni.", "Cielo coperto. Una mediocrità meteorologica accettabile.", "Né carne né pesce, proprio come la maggior parte della gente.", "Il meteo oggi è utile quanto un consiglio non richiesto.", "Aspetto che accada qualcosa, possibilmente di bagnato.", "Si sta come d'autunno, ma senza la poesia.", "Nulla di nuovo sotto le nuvole.", "Un martedì travestito da lunedì atmosferico.", "Vivere nell'ombra è un'arte, anche oggi."],
+                nongradisce: () => ["Troppe nuvole e niente acqua. Che spreco di risorse.", "Cielo grigio senza pioggia? È come una battuta senza finale.", "Sento l'aria secca che avanza, che fastidio.", "Questo vento sposta le mie amate nubi lontano.", "Un grigiore inutile che non bagna nessuno.", "Siamo in bilico tra il decente e il solare, pessimo.", "Spero che queste nuvole non siano solo scena.", "L'insipidità di questo cielo mi irrita profondamente.", "Manca la sostanza liquida, deludente.", "Un preludio al sole? Spero vivamente di no."],
+                odia: () => ["C'è il sole. Sento già il rumore delle risate dei passanti. Nausea.", "Tutti fuori come pecore al sole. Che noia infinita.", "Troppa luce. Mi sento esposto al giudizio di persone banali.", "Il terreno è secco come il cuore di un amministratore di condominio.", "Niente pozzanghere, niente schizzi. Giornata sprecata.", "Il sole splende, la speranza rinasce. Che scenario raccapricciante.", "Vogliono farmi abbronzare? Preferirei la gogna.", "Luce accecante, proprio quello che odio del mattino.", "Il mondo brilla di una luce finta e irritante.", "Sole. La prova che l'universo non ha buon gusto."]
+            }
+        },
+        aureo: { 
+            bio: "Aureo ha un'autostima più alta del picco di calore di agosto. È convinto che il sole sia stato inventato solo per illuminare il suo manto.",
+            ama: "Sole", gradisce: "Caldo Torrido", nongradisce: "Pioggia", odia: "Nebbia",
+            sarcasmo: {
+                ama: () => ["Luce divina! Finalmente il mondo può ammirarci.", "Guarda chi gira con l'ombrello per paura di due raggi. Deboli.", "Oggi siamo radiosi. Gli altri sono solo ombre fastidiose.", "Il sole picchia, ma noi brilliamo. Lasciamoli sudare.", "Finalmente un riflettore degno di noi due.", "Splendore assoluto, come la mia autostima.", "Cielo terso per far risaltare il mio profilo migliore.", "Il sole bacia i belli, e noi siamo in cima alla lista.", "Amo il riflesso della mia gloria sull'asfalto bollente.", "Giornata da re. Gli altri possono solo inchinarsi."],
+                gradisce: () => ["Si scalda l'ambiente, la mia aura ringrazia.", "Calore accettabile, ideale per una sfilata all'aperto.", "Un clima dorato per una personalità altrettanto preziosa.", "Sentire il calore sulla pelle è quasi erotico, se sei me.", "La temperatura sale, il mio umore pure.", "Buon lavoro, sole. Continua così.", "Finalmente un po' di energia termica di classe.", "Si sta quasi bene, manca solo il coro di lodi.", "Un tepore che accarezza la mia superiorità.", "Gradisco questo aumento di visibilità."],
+                neutro: () => ["Pioggia o vento? Finché non rovinano il pelo, va bene.", "Giornata mite, una cornice discreta per la mia bellezza.", "Il meteo è un dettaglio per chi splende di luce propria.", "Niente di speciale, ma resto comunque l'attrazione principale.", "Indifferente alle variazioni di pressione, sono costante nella grazia.", "Passabile, purché il fango resti lontano dai miei zoccoli.", "Un'ordinaria giornata di ammirazione reciproca.", "Il cielo è okay, io sono fantastico.", "Poco importa il meteo, la classe è atemporale.", "Un clima neutro per un ego straordinario."],
+                nongradisce: () => ["Nuvole? Chi ha osato mettere una tenda davanti alla mia gloria?", "Il cielo si oscura, spero non sia contagioso.", "Questa ombra improvvisa è una mancanza di rispetto.", "Troppo grigio, smorza i miei colori naturali.", "Sento la mia lucentezza diminuire, inaccettabile.", "Nuvole passeggere? Meglio che corrano veloci.", "Un abbassamento di tono che non mi appartiene.", "Grigiume plebeo, non mi si addice.", "Chi ha spento la luce principale?", "Fastidioso, come un fan troppo insistente."],
+                odia: () => ["Nebbia. Sembra deodorante economico ovunque.", "Ridatemi il mio regno. Questo vapore offende il mio stile.", "Grigiume inaccettabile. Chi ha messo questo filtro?", "Non vedo il mio riflesso, questa è un'emergenza nazionale.", "Nebbia fitta come l'intelligenza media della gente.", "Scomparire nel grigio è per i mediocri, non per me.", "Un'umidità opaca che rovina ogni mia posa.", "Maledetta nebbia, il mondo è diventato cieco alla mia bellezza.", "Invisibile? Io? Questo è un crimine contro l'umanità.", "L'oscurità tattica della nebbia mi disgusta."]
+            }
+        },
+        vampa: { 
+            bio: "Vampa non ha sangue, ha magma nelle vene. Il suo sogno è vedere l'asfalto sciogliersi come burro in padella.",
+            ama: "Caldo Torrido", gradisce: "Sole", nongradisce: "Vento", odia: "Freddo Artico",
+            sarcasmo: {
+                ama: () => ["Si schiatta! Sento i neuroni della gente che friggono.", "Vedere gli altri sudare è il nostro sport preferito.", "Finalmente si brucia. Chissà quanti amanti del gelo piangono.", "Afa meravigliosa. La gente boccheggia, noi dominiamo.", "Trenta gradi e salire. Il mondo è il nostro barbecue.", "Amo l'odore dell'asfalto che si scioglie al mattino.", "Il calore torrido è la carezza del mio elemento.", "Soffrite? Bene, significa che il meteo funziona.", "Inferno in terra. Finalmente mi sento a casa.", "Cielo di fuoco, anima di lava. Perfezione."],
+                gradisce: () => ["Sole pieno, la mia temperatura interna ringrazia.", "Bella giornata, si inizia a ragionare seriamente.", "C'è luce e c'è calore, la vita è accettabile.", "Sento il termometro che sale, un piacere quasi fisico.", "Un po' di calore per svegliare questa massa di bradipi.", "Il sole picchia, io rispondo con un sorriso bruciante.", "Buon inizio, ma voglio vedere il fumo uscire dai tombini.", "Si sta scaldando l'aria, finalmente aria respirabile.", "Gradisco questa anteprima del deserto.", "Ottimo lavoro solare, continua a pompare."],
+                neutro: () => ["Pioggia o nuvole? Basta che non ci sia vento gelido.", "Indifferente all'umidità, la mia fiamma non si spegne.", "Giornata mediocre, né calda né fredda.", "Sopravvivo a questa tiepidezza con sdegno.", "Il meteo è stabile, la mia rabbia pure.", "Nulla di nuovo nella valle delle temperature medie.", "Spero che questa pioggia sia almeno calda.", "Indifferente a tutto ciò che non bolle.", "Un martedì termico senza gloria.", "Paziento in attesa del picco di agosto."],
+                nongradisce: () => ["C'è vento. Mi sta raffreddando i pensieri, che fastidio.", "Sento una brezza che non mi piace per niente.", "Questo movimento d'aria sta rovinando il mio clima ideale.", "Vento inutile che sposta il calore altrove.", "Un refolo di troppo e inizio a innervosirmi.", "Non gradisco questo ventilatore naturale.", "L'aria si muove troppo, preferisco la stasi afosa.", "Brezza fastidiosa come una zanzara nell'orecchio.", "Chi ha lasciato aperta la finestra del pianeta?", "Il vento è il nemico del mio equilibrio termico."],
+                odia: () => ["Freddo? Chi ha lasciato aperto il freezer?", "Sento gente dire 'bel freschetto'. Si congelino.", "Odio dovermi coprire. Meteo per gente senza calore.", "Il ghiaccio è un errore della natura.", "Sento le dita diventare blu. Questo è un attentato.", "Maledetto freddo, mi si sta spegnendo la miccia.", "Gente felice con la neve? Terapia d'urto subito.", "Il gelo è la tomba del divertimento.", "Chiunque ami il freddo ha il cuore di un merluzzo surgelato.", "Inverno. La stagione dell'odio."]
+            }
+        },
+        gelo: { 
+            bio: "Gelo trova il calore umano 'volgare' e quello climatico 'un errore di progettazione'.",
+            ama: "Freddo Artico", gradisce: "Neve", nongradisce: "Umido", odia: "Caldo Torrido",
+            sarcasmo: {
+                ama: () => ["Gelo siderale. Finalmente le zanzare sono morte.", "Guarda quei deboli con mille sciarpe. Ridicoli.", "Vento polare! Pulizia tra chi non è d'acciaio.", "Vedere la gente battere i denti mi riscalda.", "Il freddo preserva le cose belle. Come noi.", "Sotto zero si ragiona meglio. Tutto si ferma.", "Ghiaccio ovunque. Il mondo è finalmente ordinato.", "Amo il brivido che uccide l'entusiasmo solare.", "Artico privato in città. Splendido.", "Sentite questo freddo? È la nostra corona di cristallo."],
+                gradisce: () => ["Cielo coperto, almeno il sole non scoccia.", "L'ombra delle nubi è un balsamo per i miei occhi.", "Finalmente si abbassa la cresta termica.", "Gradisco questa assenza di luce molesta.", "Nuvole pesanti, spero portino grandine.", "L'oscurità è un colore sottovalutato.", "Si sta bene in questa penombra gelida.", "Ottimo velo nuvoloso, protegge la mia carnagione pallida.", "Il grigio è il nuovo nero atmosferico.", "Apprezzo questo calo di luminosità inutile."],
+                neutro: () => ["Pioggia o vento? Purché non si superino i 15 gradi.", "Indifferente alle variazioni di pressione, resto freddo.", "Giornata mite, il purgatorio dei meteoropatici.", "Si vive anche oggi, purtroppo senza neve.", "Nulla di speciale sotto questo cielo senza carattere.", "Il meteo è piatto come le conversazioni in ascensore.", "Né carne né pesce termico.", "Aspetto che l'inverno faccia sul serio.", "Una giornata ordinaria di ordinario squallore.", "Indifferente alle lamentele degli amanti del mare."],
+                nongradisce: () => ["C'è un'umidità appiccicosa. Mi sento sporco.", "Non gradisco questo vapore che mi circonda.", "Sento l'aria diventare pesante e bagnata, ma calda.", "Umidità tropicale inaccettabile, voglio l'aria secca.", "Questa nebbia calda è un insulto alla mia dignità.", "Mi sento come in una lavanderia a vapore, disgustoso.", "Umidità che ti entra nelle ossa, ma nel modo sbagliato.", "Sento il sudore freddo della terra, orribile.", "Un clima viscido per persone viscide.", "Non gradisco questa zuppa atmosferica."],
+                odia: () => ["Fa caldo. Sento puzza di crema solare.", "Si suda. Umiliazione biologica per la massa.", "Il caldo è volgare. Il gelo è aristocratico.", "L'afa è la democrazia della puzza.", "Trenta gradi? È una condanna a morte estetica.", "Sento i miei circuiti di ghiaccio sciogliersi, orrore.", "Caldo torrido. Il trionfo della mediocrità solare.", "Sole e caldo: il binomio dell'apocalisse.", "Voglio vivere in un surgelatore finché non finisce l'estate.", "L'estate è la punizione per i peccati del mondo."]
+            }
+        },
+        puff: { 
+            bio: "Puff vive in una perenne scala di grigi. Odia i contrasti forti: né troppo sole, né troppa tempesta.",
+            ama: "Nuvole", gradisce: "Nebbia", nongradisce: "Sole", odia: "Temporali",
+            sarcasmo: {
+                ama: () => ["Tutto grigio topo. Pace per noi.", "Niente ombre. La realtà è piatta e perfetta.", "Le nuvole filtrano la stupidità esterna.", "Un velo di nuvole per nascondere il mondo.", "Finalmente il cielo ha un colore serio.", "Né bianco né azzurro: la perfezione del grigio.", "Amo questa coperta soffice che zittisce il mondo.", "Niente riflettori solari oggi, grazie al cielo.", "Il grigio è l'unico colore che non stanca.", "Grigiume assoluto. La mia zona di comfort."],
+                gradisce: () => ["Nebbia fitta. Il mondo scompare, ottima notizia.", "Gradisco questa visibilità ridotta, meno gente da vedere.", "La nebbia è il mio filtro naturale preferito.", "Tutto è ovattato, il rumore sparisce.", "Un'atmosfera misteriosa per chi non ha nulla da dire.", "Finalmente un po' di discrezione meteorologica.", "Gradisco questo velo opaco sulla città.", "Si vede poco, si soffre meno.", "Nebbia e silenzio, un accoppiata vincente.", "Apprezzo la timidezza del paesaggio."],
+                neutro: () => ["Vento o pioggia sottile? Indifferente.", "Giornata mite, un intervallo tra una nuvola e l'altra.", "Il meteo è stabile, io resto nel mio guscio.", "Nulla di nuovo sotto questo cielo plumbeo.", "Indifferente ai gradi, basta che resti grigio.", "Si sta come nuvole al vento, immobili.", "Un martedì atmosferico senza pretese.", "Nulla mi smuove dal mio stato di quiete.", "Aspetto che le nubi si addensino ancora.", "Neutro come la mia espressione oggi."],
+                nongradisce: () => ["Il sole sta cercando di bucare le nubi. Che fastidio.", "Non gradisco questa luce che filtra prepotente.", "Sento l'azzurro che avanza, un brutto segno.", "Il sole è troppo insistente oggi, vuole farsi notare.", "Questa chiarezza improvvisa mi irrita.", "Non gradisco essere illuminato senza preavviso.", "Cielo troppo limpido per i miei gusti.", "Luce molesta che rovina l'atmosfera soffusa.", "Il sole sta vincendo, che giornata penosa.", "Speriamo in un rapido ritorno all'oscurità."],
+                odia: () => ["Tuoni e fulmini. Che bisogno c'è di gridare?", "Natura teatrale. Che fastidio.", "I temporali sono così... rumorosi. Inutilmente.", "Lampi e caos. La nevrastenia del cielo.", "Odia il dramma atmosferico dei fulmini.", "Perché tutta questa elettricità? State calmi.", "Un temporale è solo una nuvola che ha perso il controllo.", "Rumore bianco molesto, ridatemi il silenzio grigio.", "Scenate meteorologiche infantili.", "Temporale. Il cattivo gusto del cielo."]
+            }
+        },
+        blakie: { 
+            bio: "Blakie non guarda il meteo, guarda l'indice di distruzione potenziale.",
+            ama: "Temporali", gradisce: "Pioggia", nongradisce: "Nuvole", odia: "Sole",
+            sarcasmo: {
+                ama: () => ["Boom! Spero sia saltata la corrente a tutti.", "Amo vederli correre come formiche impazzite.", "Oscurità e rumore. Il meteo perfetto.", "I lampi illuminano la loro mediocrità.", "Il temporale lava via la noia.", "Senti questo tuono? È il battito del mio cuore.", "Fulmini e saette: la mia ricarica quotidiana.", "Più forte! Voglio che la terra tremi!", "Elettricità pura nell'aria. Mi sento una divinità.", "Temporale distruttivo. Finalmente un po' di azione."],
+                gradisce: () => ["Piove bene, l'ambiente si prepara al peggio.", "Gradisco questo scroscio violento sui tetti.", "L'acqua lava le strade dai peccati solari.", "Un clima piovoso che carica l'aria di tensione.", "Sentire la pioggia battere è un piacere sadico.", "Gradisco questo preludio alla tempesta.", "Ottima intensità liquida, continua così.", "L'umidità sale, i tuoni seguiranno.", "Un cielo che promette scintille, approvato.", "Pioggia scura e fredda, gradita."],
+                neutro: () => ["Nebbia o foschia? Indifferente, basta non ci sia luce.", "Temperatura mite, l'ideale per pianificare il caos.", "Indifferente al vento, purché porti nuvole nere.", "Nulla di nuovo nella valle del silenzio elettrico.", "Aspetto la scarica, intanto mi annoio.", "Il meteo oggi è un libro già letto.", "Indifferente alle lamentele degli amanti del sole.", "Pazienza, la tempesta arriverà.", "Un martedì senza lampi.", "Neutro come una batteria scarica."],
+                nongradisce: () => ["Semplici nuvole senza fulmini. Che noia.", "Non gradisco questo grigiore statico e silenzioso.", "Manca la scarica elettrica, deludente.", "Nuvole che non promettono nulla, inutili.", "Un cielo coperto ma pigro, mi irrita.", "Non gradisco questa attesa senza fine.", "Grigio insulso, dov'è il rumore?", "Nuvole da salotto, che squallore.", "Manca l'energia, sento la batteria calare.", "Non gradisco la calma piatta nuvolosa."],
+                odia: () => ["Cielo azzurro e uccellini. Voglio un fucile.", "Ridatemi la tempesta. L'azzurro è un insulto.", "Il sole splende: il giorno peggiore della mia vita.", "Luce accecante, proprio quello che odio.", "Il sole spegne il mio entusiasmo elettrico.", "Tutti sorridono al sole? Mi viene da vomitare.", "Un'alba radiosa: l'inizio della fine.", "Sole: il nemico giurato dei fulmini.", "Questa chiarezza solare mi offende profondamente.", "Maledetto azzurro, non ha profondità."]
+            }
+        },
+        brina: {
+            bio: "Elegante e silenziosa, Brina adora quando il mondo diventa bianco e ovattato.",
+            ama: "Neve", gradisce: "Freddo Artico", nongradisce: "Nebbia", odia: "Pioggia",
+            sarcasmo: {
+                ama: () => ["Il silenzio perfetto. Finalmente il rumore del mondo è soffocato dalla neve.", "Guarda che spettacolo: tutto bianco, pulito e assolutamente magico.", "Nevica! Restiamo qui a goderci questo paradiso mentre gli altri spalano.", "Siamo gli unici a capire la vera bellezza. Il resto del mondo è solo invidioso.", "Niente fango, niente caos, solo noi e i fiocchi. Perfezione pura.", "Finalmente un clima degno di noi. Lascia che gli altri tremino.", "Adoro come i fiocchi si posano su di me. Mi sento una regina di cristallo.", "Senti questo silenzio? È il suono della nostra vittoria meteorologica.", "La neve è il miglior filtro del mondo. Tutto è candido.", "Chiunque preferisca il sole a questo non merita la nostra amicizia."],
+                gradisce: () => ["Gelo secco, l'aria morde. Meraviglioso.", "Gradisco questo freddo che blocca la vita plebea.", "Finalmente si può respirare senza sudare.", "Il termometro scende, la mia felicità sale.", "Gradisco questa aria tagliente come il mio sarcasmo.", "Un freddo tonificante per persone superiori.", "Ottima temperatura per conservare i segreti.", "Senti il ghiaccio formarsi, molto gradito.", "Un clima rigido per un'eleganza cristallina.", "Gradisco questo brivido costante."],
+                neutro: () => ["Nuvole o vento? Purché non piova.", "Giornata mite, una noia mortale.", "Indifferente ai cambiamenti di pressione mediocri.", "Aspetto che il cielo diventi bianco.", "Nulla di nuovo sotto questo grigiore.", "Si sopravvive alla tiepidezza con sdegno.", "Un martedì senza fiocchi.", "Indifferente alle lamentele solari.", "Il meteo è piatto, io pure.", "Neutro come l'acqua distillata."],
+                nongradisce: () => ["Questa nebbia è umida e sporca, non la gradisco.", "Non gradisco questa visibilità ridotta ma bagnata.", "Nebbia grigia che rovina il mio candore.", "Un'umidità opaca che mi irrita profondamente.", "Non gradisco scomparire in questo modo.", "La nebbia nasconde la bellezza del gelo.", "Un velo grigio e viscido, inaccettabile.", "Non gradisco questa zuppa atmosferica.", "Nebbia fastidiosa come un ospite inatteso.", "L'aria è troppo densa, preferisco il secco."],
+                odia: () => ["PIOGGIA?! Sta sciogliendo tutta la mia magia! È un crimine!", "Odio quando l'acqua rovina la neve. È un'aggressione frontale.", "Guarda quel fango... è il fallimento del sistema meteorologico.", "Siamo circondate da dilettanti amanti delle pozzanghere.", "Un disastro totale. Il mondo è diventato una zuppa calda e sporca.", "L'acqua che cade è un insulto alla mia dignità.", "Sento le mie zoccoli inzuppati, che orrore.", "La pioggia lava via ogni traccia di nobiltà.", "Pessima scelta atmosferica, ridatemi il gelo.", "Chiunque ami la pioggia ha gusti discutibili."]
+            }
+        },
+        dusty: {
+            bio: "Dusty è l'unicorno del mistero. Ama quando il mondo scompare dietro un velo di nebbia fitta.",
+            ama: "Nebbia", gradisce: "Nuvole", nongradisce: "Vento", odia: "Sole",
+            sarcasmo: {
+                ama: () => ["Nebbia fitta! Finalmente un po' di privacy. Nessuno può fissarci.", "Adoro quando il mondo scompare a un metro. Siamo solo io e te.", "Guarda che meraviglia: tutto sparito. Chi ha bisogno degli altri?", "Il mistero è servito. Siamo i fantasmi più cool della zona.", "Questa visibilità zero è il mio massimo livello di comfort.", "Finalmente la gente smette di correre e sta zitta. Merito della nebbia.", "Adoro l'atmosfera da film horror. Siamo le protagoniste.", "Niente orizzonti, niente futuro, solo questo bellissimo presente grigio.", "Senti come tutto è ovattato? È il nostro scudo contro la realtà.", "Se qualcuno ci cerca, dite che siamo evaporate nel grigio."],
+                gradisce: () => ["Cielo molto coperto, il sole è solo un ricordo.", "Gradisco questo grigio denso che avvolge tutto.", "Le nuvole sono basse, quasi nebbia. Bene.", "Gradisco l'assenza di contrasti oggi.", "Un'ombra perenne sulla città, molto gradita.", "Finalmente un po' di discrezione celeste.", "Gradisco questa penombra costante.", "Ottimo velo nuvoloso, continua così.", "Un clima cupo per un umore altrettanto fosco.", "Apprezzo la timidezza del paesaggio."],
+                neutro: () => ["Pioggia sottile o freddo? Indifferente.", "Giornata mite, un intervallo nel mistero.", "Indifferente alle variazioni di temperatura.", "Aspetto che la nebbia torni a trovarmi.", "Nulla di nuovo sotto questo cielo senza veli.", "Si vive nell'ordinario grigiore.", "Un martedì senza spessore.", "Indifferente ai rumori del mondo.", "Pazienza, il mistero tornerà.", "Neutro come un'ombra."],
+                nongradisce: () => ["Il vento sta soffiando via il mio velo. Inaccettabile.", "Non gradisco questo movimento d'aria molesto.", "Il vento pulisce il cielo, pessima notizia.", "Sento la mia privacy volare via, che fastidio.", "Non gradisco questo ricambio d'aria forzato.", "Il vento è il nemico del mio nascondiglio.", "Aria troppo mossa, preferisco la stasi.", "Non gradisco essere esposto al mondo.", "Il vento porta via il mistero, deludente.", "Chi ha acceso questo ventilatore gigante?"],
+                odia: () => ["SERENO?! Mi sento troppo esposta. Ridatemi il mio velo grigio!", "Troppa luce, troppa gente, troppa realtà. Voglio sparire.", "Guarda quel sole... è un faro puntato su di noi.", "Odio il cielo terso. È così... ovvio. Niente fantasia.", "Tutti sorridono perché c'è il sole. Io voglio piangere nel fumo.", "Luce accecante, il mio peggior nemico.", "Il sole squarcia il mistero, lo odio.", "Questa chiarezza solare è un insulto alla privacy.", "Maledetto azzurro, non nasconde nulla.", "Sole: la fine di ogni segreto."]
+            }
+        }
+    };
+
+    function setCustomIcon(meteo) {
+        const container = document.getElementById('icon-main');
+        const icone = {
+            'Clear': `<svg viewBox="0 0 24 24"><path fill="#f1c40f" d="M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7M12,2L14.39,5.42L18.42,4.38L17.38,8.41L20.81,10.81L17.38,13.21L18.42,17.24L14.39,16.2L12,19.61L9.61,16.2L5.58,17.24L6.62,13.21L3.19,10.81L6.62,8.41L5.58,4.38L9.61,5.42L12,2Z"/></svg>`,
+            'Clouds': `<svg viewBox="0 0 24 24"><path fill="#ecf0f1" d="M19.35,10.03C18.67,6.59 15.64,4 12,4C9.11,4 6.6,5.64 5.35,8.03C2.34,8.36 0,10.9 0,14A6,6 0 0,0 6,20H19A5,5 0 0,0 24,15C24,12.36 21.95,10.22 19.35,10.03Z"/></svg>`,
+            'Rain': `<svg viewBox="0 0 24 24"><path fill="#3498db" d="M12,2L4.5,20.29L5.21,21L12,18L18.79,21L19.5,20.29L12,2Z"/></svg>`,
+            'Thunderstorm': `<svg viewBox="0 0 24 24"><path fill="#f1c40f" d="M7,2V13H10V22L17,10H13L17,2H7Z"/></svg>`,
+            'Mist': `<svg viewBox="0 0 24 24"><path fill="#95a5a6" d="M3,15H21V13H3V15M3,19H21V17H3V19M3,11H21V9H3V11M3,5V7H21V5H3Z"/></svg>`,
+            'Snow': `<svg viewBox="0 0 24 24"><path fill="#ffffff" d="M12,2L14.09,6.24L18.82,6.92L15.41,10.24L16.21,14.96L12,12.74L7.79,14.96L8.59,10.24L5.18,6.92L9.91,6.24L12,2Z"/></svg>`
+        };
+        container.innerHTML = icone[meteo] || icone['Clouds'];
+    }
+
+    fetch('https://api.openweathermap.org/data/2.5/weather?q=Piove di Sacco&appid=eca827552d285d6fd2783dc704b52c48&units=metric&lang=it')
+        .then(r => r.json()).then(d => {
+            t = Math.round(d.main.temp);
+            m = d.weather[0].main;
+            dText = d.weather[0].description;
+            document.getElementById('w-temp').innerText = t + "°";
+            document.getElementById('w-desc').innerText = dText;
+            document.getElementById('w-feels').innerText = Math.round(d.main.feels_like) + "°";
+            document.getElementById('w-hum').innerText = d.main.humidity + "%";
+            document.getElementById('w-wind').innerText = Math.round(d.wind.speed * 3.6) + " km/h";
+            setCustomIcon(m);
+            
+            const savedHero = localStorage.getItem('mioUnicorno');
+            if (savedHero) {
+                const btns = document.querySelectorAll('.grid button');
+                btns.forEach(b => { if(b.innerText.toLowerCase() === savedHero) seleziona(savedHero, b); });
+                if (localStorage.getItem('confermato') === 'true') conferma();
+            }
+        });
+
+    window.addEventListener('load', () => {
+        document.getElementById('disclaimer-overlay').style.display = 'flex';
+    });
+
+    function accettaDisclaimer() {
+        document.getElementById('disclaimer-overlay').style.display = 'none';
+    }
+
+    function seleziona(nome, btn) {
+        selected = nome;
+        localStorage.setItem('mioUnicorno', nome);
+        localStorage.setItem('confermato', 'false'); 
+        document.body.className = '';
+        document.querySelectorAll('.grid button').forEach(b => b.classList.remove('active'));
+        if(btn) btn.classList.add('active');
+        
+        const u = db[nome];
+        document.getElementById('identikit').style.display = "block";
+        document.getElementById('char-img').src = nome + ".png";
+        
+        const usati = [u.ama, u.gradisce, u.nongradisce, u.odia];
+        const neutri = condizioniTutte.filter(val => !usati.includes(val));
+
+        document.getElementById('char-prefs').innerHTML = `
+            <li><span>😍</span> <b class="label-pref">Ama:</b> <span class="value-pref">${u.ama}</span></li>
+            <li><span>😊</span> <b class="label-pref">Gradisce:</b> <span class="value-pref">${u.gradisce}</span></li>
+            <li><span>😐</span> <b class="label-pref">Neutro:</b> <span class="value-pref">${neutri.join(', ')}</span></li>
+            <li><span>😒</span> <b class="label-pref">Non gradisce:</b> <span class="value-pref">${u.nongradisce}</span></li>
+            <li><span>😡</span> <b class="label-pref">Odia:</b> <span class="value-pref">${u.odia}</span></li>
+        `;
+        document.getElementById('char-prefs').style.display = "block";
+        document.getElementById('char-bio').innerText = u.bio;
+        document.getElementById('char-bio').style.display = "block";
+        document.getElementById('char-mood').style.display = "none";
+        document.getElementById('confirm-btn').style.display = "block";
+
+        reaction = 'neutro';
+        const wind = Math.round(document.getElementById('w-wind').innerText.split(' ')[0]);
+        const hum = parseInt(document.getElementById('w-hum').innerText);
+
+        if(nome === 'vampa') {
+            if(t > 30) reaction = 'ama';
+            else if(m === 'Clear') reaction = 'gradisce';
+            else if(wind > 20) reaction = 'nongradisce';
+            else if(t < 15) reaction = 'odia';
+        }
+        else if(nome === 'gelo') {
+            if(t < 5) reaction = 'ama';
+            else if(m === 'Snow' || t < 10) reaction = 'gradisce';
+            else if(hum > 80) reaction = 'nongradisce';
+            else if(t > 25) reaction = 'odia';
+        }
+        else if(nome === 'goccia') {
+            if(m === 'Rain') reaction = 'ama';
+            else if(m === 'Drizzle') reaction = 'gradisce';
+            else if(m === 'Clouds') reaction = 'nongradisce';
+            else if(m === 'Clear') reaction = 'odia';
+        }
+        else if(nome === 'aureo') {
+            if(m === 'Clear') reaction = 'ama';
+            else if(t > 25) reaction = 'gradisce';
+            else if(m === 'Rain') reaction = 'nongradisce';
+            else if(m === 'Mist' || m === 'Fog') reaction = 'odia';
+        }
+        else if(nome === 'puff') {
+            if(m === 'Clouds') reaction = 'ama';
+            else if(m === 'Mist' || m === 'Fog') reaction = 'gradisce';
+            else if(m === 'Clear') reaction = 'nongradisce';
+            else if(m === 'Thunderstorm') reaction = 'odia';
+        }
+        else if(nome === 'blakie') {
+            if(m === 'Thunderstorm') reaction = 'ama';
+            else if(m === 'Rain') reaction = 'gradisce';
+            else if(m === 'Clouds') reaction = 'nongradisce';
+            else if(m === 'Clear') reaction = 'odia';
+        }
+        else if(nome === 'brina') {
+            if(m === 'Snow') reaction = 'ama';
+            else if(t < 5) reaction = 'gradisce';
+            else if(m === 'Mist' || m === 'Fog') reaction = 'nongradisce';
+            else if(m === 'Rain') reaction = 'odia';
+        }
+        else if(nome === 'dusty') {
+            if(m === 'Mist' || m === 'Fog') reaction = 'ama';
+            else if(m === 'Clouds') reaction = 'gradisce';
+            else if(wind > 15) reaction = 'nongradisce';
+            else if(m === 'Clear') reaction = 'odia';
+        }
+    }
+
+    function conferma() {
+        localStorage.setItem('confermato', 'true');
+        document.getElementById('char-img').src = selected + reaction + ".png";
+        document.body.className = 'bg-' + reaction;
+        document.getElementById('identikit').className = 'card border-' + reaction;
+        document.getElementById('char-prefs').style.display = "none";
+        document.getElementById('char-bio').style.display = "none"; 
+        
+        const bubble = document.getElementById('char-mood');
+        const frasi = db[selected].sarcasmo[reaction]();
+        bubble.innerText = frasi[Math.floor(Math.random() * frasi.length)];
+        bubble.style.display = "block";
+        document.getElementById('confirm-btn').style.display = "none";
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+</script>
+</body>
+</html>
