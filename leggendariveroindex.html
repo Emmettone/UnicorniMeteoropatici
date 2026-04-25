@@ -43,28 +43,7 @@
         .legal-notice { font-size: 0.7rem !important; color: #888 !important; border-top: 1px solid #333; padding-top: 15px; margin-top: 15px; font-style: normal; }
         #accept-disclaimer { width: 100%; padding: 15px; background: #ff4757; color: white; border: none; border-radius: 15px; font-weight: 900; cursor: pointer; font-size: 1rem; margin-top: 10px; }
 
-        @keyframes magicGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .app-title { 
-            font-family: 'Brush Script MT', 'Dancing Script', cursive;
-            font-size: 2.2rem; 
-            font-weight: normal; 
-            font-style: italic;
-            text-transform: none; 
-            letter-spacing: 1px; 
-            margin: 10px 0 20px 0; 
-            background: linear-gradient(270deg, #ff4757, #ffa502, #ff4757, #7d5fff); 
-            background-size: 400% 400%;
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            animation: magicGradient 6s ease infinite;
-            text-shadow: 0 0 15px rgba(255, 71, 87, 0.2);
-        }
-
+        .app-title { font-size: 1.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin: 10px 0 20px 0; background: linear-gradient(to right, #ff4757, #ffa502); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .weather-box { background: linear-gradient(145deg, #1e1e1e, #111111); padding: 15px 10px; border-radius: 28px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
         .location { font-size: 0.8rem; color: #ff4757; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; margin: 0; line-height: 1; }
         .main-weather { display: flex; align-items: center; justify-content: center; margin: -5px 0; }
@@ -91,8 +70,7 @@
         .value-pref { color: #ff4757; flex-grow: 1; text-align: center; font-weight: 800; text-transform: uppercase; }
         .char-description { background: #f8f9fa; border-radius: 15px; padding: 15px; margin-bottom: 20px; border-left: 5px solid #ff4757; font-size: 0.9rem; line-height: 1.4; color: #444; font-style: italic; }
         .mood-bubble { background: #1e272e; color: white; padding: 15px; border-radius: 20px; font-style: italic; margin-bottom: 15px; text-align: center; font-weight: bold; line-height: 1.4; display: none; }
-        #confirm-btn { width: 100%; padding: 18px; background: #2ed573; color: white; border: none; border-radius: 20px; font-size: 1.1rem; font-weight: bold; line-height: 1.2; }
-        #confirm-btn:disabled { background: #555; cursor: not-allowed; opacity: 0.8; }
+        #confirm-btn { width: 100%; padding: 18px; background: #2ed573; color: white; border: none; border-radius: 20px; font-size: 1.1rem; font-weight: bold; }
         
         .bg-felice { background: #002b16 !important; }
         .bg-arrabbiato { background: #3d0000 !important; }
@@ -124,7 +102,7 @@
 <div class="container">
     <h1 class="app-title">Unicorni Meteoropatici</h1>
     <div class="weather-box">
-        <div id="w-location" class="location">Localizzazione...</div>
+        <div class="location">Piove di Sacco</div>
         <div class="main-weather">
             <div id="icon-main" class="weather-icon-main"></div>
             <p id="w-temp" class="temp">--°</p>
@@ -156,8 +134,8 @@
         <button onclick="seleziona('gelo', this)">Gelo</button>
         <button onclick="seleziona('brina', this)">Brina</button>
         <button onclick="seleziona('dusty', this)">Dusty</button>
-        <button onclick="seleziona('bloodmoon', this)">Bloodmoon<br><span style="color: gold; font-size: 0.55rem; font-weight: 900; text-transform: uppercase;">Leggendario</span></button>
-        <button onclick="seleziona('umbra', this)">Umbra<br><span style="color: gold; font-size: 0.55rem; font-weight: 900; text-transform: uppercase;">Leggendario</span></button>
+        <button onclick="seleziona('bloodmoon', this)">Bloodmoon</button>
+        <button onclick="seleziona('umbra', this)">Umbra</button>
     </div>
 
     <div id="identikit" class="card">
@@ -182,7 +160,7 @@
                     "Finalmente il cielo ha il colore giusto. Gli amanti del sole dovrebbero vergognarsi.",
                     "Umidità perfetta. È uno spettacolo vedere la gente correre al riparo con quelle facce ridicole.",
                     "Questo grigio è poesia pura. Gli altri non possono capire, sono troppo impegnati a sorridere a caso.",
-                    "Cielo coperto: la protezione ideale anticancerogena contro l'inutile ottimismo solare della massa.",
+                    "Cielo coperto: la protezione ideale contro l'inutile ottimismo solare della massa.",
                     "Il mondo lavato via da ogni pretesa di allegria dei comuni mortali. Sublime."
                 ],
                 arrabbiato: () => [
@@ -243,7 +221,7 @@
             sarcasmo: {
                 felice: () => [
                     "Finalmente l'aria taglia la faccia. Chi non lo regge dovrebbe sparire dalla vista.",
-                    "Il freddo conserva, il caldo fa marcire il cervello altrui. E i risultati si vede.",
+                    "Il freddo conserva, il caldo fa marcire il cervello altrui. E i risultati si vedono.",
                     "La scarsa dignità della gente scricchiola sul ghiaccio oggi. Che suono delizioso.",
                     "Morte al sole e ai fanatici che lo venerano come amebe tropicali senza cervello.",
                     "Quando la temperatura scende sotto lo zero, raggiunge il quoziente intellettivo della massa."
@@ -285,7 +263,7 @@
             sarcasmo: {
                 felice: () => [
                     "Oscurità e rumore: la ninna nanna perfetta per far paura agli idioti.",
-                    "La scarica elettrica esalta, mentre gli altri tremano sotto il letto come conigli.",
+                    "La scarica elettrica esalta, mentre gli altri tremane sotto il letto come conigli.",
                     "Trema tutto. Finalmente la natura ricorda alla massa quanto sia nulla.",
                     "Il buio luminoso della tempesta pulisce il mondo dai sognatori di serie B.",
                     "Finalmente un meteo con un briciolo di cattiveria. Gli altri sono troppo teneri."
@@ -389,7 +367,7 @@
     function setCustomIcon(meteo) {
         const container = document.getElementById('icon-main');
         const icone = {
-            'Clear': `<svg viewBox="0 0 24 24"><path fill="#f1c40f" d="M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7M12,2L14.39,5.42L18.42,4.38L17.38,8.41L20.81,10.81L17.38,13.21L18.42,17.24L14.39,16.2L12,19.61L9.61,16.2L5.58,17.24L6.62,13.21L3.19,10.81L6.62,8.41L5.58,4.38L9.91,6.24L12,2Z"/></svg>`,
+            'Clear': `<svg viewBox="0 0 24 24"><path fill="#f1c40f" d="M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7M12,2L14.39,5.42L18.42,4.38L17.38,8.41L20.81,10.81L17.38,13.21L18.42,17.24L14.39,16.2L12,19.61L9.61,16.2L5.58,17.24L6.62,13.21L3.19,10.81L6.62,8.41L5.58,4.38L9.61,5.42L12,2Z"/></svg>`,
             'Clouds': `<svg viewBox="0 0 24 24"><path fill="#ecf0f1" d="M19.35,10.03C18.67,6.59 15.64,4 12,4C9.11,4 6.6,5.64 5.35,8.03C2.34,8.36 0,10.9 0,14A6,6 0 0,0 6,20H19A5,5 0 0,0 24,15C24,12.36 21.95,10.22 19.35,10.03Z"/></svg>`,
             'Rain': `<svg viewBox="0 0 24 24"><path fill="#3498db" d="M12,2L4.5,20.29L5.21,21L12,18L18.79,21L19.5,20.29L12,2Z"/></svg>`,
             'Thunderstorm': `<svg viewBox="0 0 24 24"><path fill="#f1c40f" d="M7,2V13H10V22L17,10H13L17,2H7Z"/></svg>`,
@@ -400,45 +378,24 @@
         container.innerHTML = icone[meteo] || icone['Clouds'];
     }
 
-    function getWeatherData(lat, lon) {
-        const apiKey = 'eca827552d285d6fd2783dc704b52c48';
-        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=it`;
-        
-        fetch(url)
-            .then(r => r.json()).then(d => {
-                t = Math.round(d.main.temp);
-                m = d.weather[0].main;
-                document.getElementById('w-location').innerText = d.name;
-                document.getElementById('w-temp').innerText = t + "°";
-                document.getElementById('w-desc').innerText = d.weather[0].description;
-                document.getElementById('w-feels').innerText = Math.round(d.main.feels_like) + "°";
-                document.getElementById('w-hum').innerText = d.main.humidity + "%";
-                document.getElementById('w-wind').innerText = Math.round(d.wind.speed * 3.6) + " km/h";
-                setCustomIcon(m);
-                
-                const savedHero = localStorage.getItem('mioUnicorno');
-                if (savedHero) {
-                    const btns = document.querySelectorAll('.grid button');
-                    btns.forEach(b => { 
-                        if(b.innerText.toLowerCase().includes(savedHero)) seleziona(savedHero, b); 
-                    });
-                    if (localStorage.getItem('confermato') === 'true') conferma();
-                }
-            })
-            .catch(() => {
-                document.getElementById('w-location').innerText = "Errore caricamento";
-            });
-    }
-
-    // Geocalizzazione automatica
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (pos) => getWeatherData(pos.coords.latitude, pos.coords.longitude),
-            () => getWeatherData(45.3429, 12.0361) // Fallback: Piove di Sacco
-        );
-    } else {
-        getWeatherData(45.3429, 12.0361);
-    }
+    fetch('https://api.openweathermap.org/data/2.5/weather?q=Piove di Sacco&appid=eca827552d285d6fd2783dc704b52c48&units=metric&lang=it')
+        .then(r => r.json()).then(d => {
+            t = Math.round(d.main.temp);
+            m = d.weather[0].main;
+            document.getElementById('w-temp').innerText = t + "°";
+            document.getElementById('w-desc').innerText = d.weather[0].description;
+            document.getElementById('w-feels').innerText = Math.round(d.main.feels_like) + "°";
+            document.getElementById('w-hum').innerText = d.main.humidity + "%";
+            document.getElementById('w-wind').innerText = Math.round(d.wind.speed * 3.6) + " km/h";
+            setCustomIcon(m);
+            
+            const savedHero = localStorage.getItem('mioUnicorno');
+            if (savedHero) {
+                const btns = document.querySelectorAll('.grid button');
+                btns.forEach(b => { if(b.innerText.toLowerCase() === savedHero) seleziona(savedHero, b); });
+                if (localStorage.getItem('confermato') === 'true') conferma();
+            }
+        });
 
     function accettaDisclaimer() {
         document.getElementById('disclaimer-overlay').style.display = 'none';
@@ -453,22 +410,13 @@
         if(btn) btn.classList.add('active');
         
         const u = db[nome];
-        const identikit = document.getElementById('identikit');
-        const confirmBtn = document.getElementById('confirm-btn');
-        identikit.style.display = "block";
+        document.getElementById('identikit').style.display = "block";
         document.getElementById('char-img').src = nome + ".png";
         
-        if (nome === 'bloodmoon' || nome === 'umbra') {
-            confirmBtn.innerHTML = `Evocami a 19,99€<br><span style="font-size: 0.85rem; color: #39FF14; font-weight: normal; text-shadow: 0 0 5px rgba(57, 255, 20, 0.5);">Sbloccabile durante un eclissi reale a 2,99€</span>`;
-            confirmBtn.disabled = true;
-        } else {
-            confirmBtn.innerText = "SCELGO TE";
-            confirmBtn.disabled = false;
-        }
-
         const definiti = [u.ama, u.gradisce, u.nonGradisce, u.odia];
         let neutri = condizioniTutte.filter(c => !definiti.includes(c));
         
+        // Modifica per Bloodmoon e Umbra: campo neutro forzato vuoto
         if (nome === 'bloodmoon' || nome === 'umbra') {
             neutri = [];
         }
@@ -489,7 +437,7 @@
         document.getElementById('char-bio').innerText = u.bio;
         document.getElementById('char-bio').style.display = "block";
         document.getElementById('char-mood').style.display = "none";
-        confirmBtn.style.display = "block";
+        document.getElementById('confirm-btn').style.display = "block";
 
         reaction = 'neutro';
         const mc = { 'Clear': 'Sole', 'Rain': 'Pioggia', 'Clouds': 'Nuvole', 'Thunderstorm': 'Temporali', 'Mist': 'Nebbia', 'Fog': 'Nebbia', 'Snow': 'Neve' }[m] || 'Nuvole';
@@ -507,8 +455,6 @@
     }
 
     function conferma() {
-        if (selected === 'bloodmoon' || selected === 'umbra') return;
-        
         localStorage.setItem('confermato', 'true');
         document.getElementById('char-img').src = selected + reaction + ".png";
         document.body.className = 'bg-' + reaction;

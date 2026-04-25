@@ -43,12 +43,6 @@
         .legal-notice { font-size: 0.7rem !important; color: #888 !important; border-top: 1px solid #333; padding-top: 15px; margin-top: 15px; font-style: normal; }
         #accept-disclaimer { width: 100%; padding: 15px; background: #ff4757; color: white; border: none; border-radius: 15px; font-weight: 900; cursor: pointer; font-size: 1rem; margin-top: 10px; }
 
-        @keyframes magicGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
         .app-title { 
             font-family: 'Brush Script MT', 'Dancing Script', cursive;
             font-size: 2.2rem; 
@@ -57,14 +51,10 @@
             text-transform: none; 
             letter-spacing: 1px; 
             margin: 10px 0 20px 0; 
-            background: linear-gradient(270deg, #ff4757, #ffa502, #ff4757, #7d5fff); 
-            background-size: 400% 400%;
+            background: linear-gradient(to right, #ff4757, #ffa502); 
             -webkit-background-clip: text; 
             -webkit-text-fill-color: transparent; 
-            animation: magicGradient 6s ease infinite;
-            text-shadow: 0 0 15px rgba(255, 71, 87, 0.2);
         }
-
         .weather-box { background: linear-gradient(145deg, #1e1e1e, #111111); padding: 15px 10px; border-radius: 28px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
         .location { font-size: 0.8rem; color: #ff4757; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; margin: 0; line-height: 1; }
         .main-weather { display: flex; align-items: center; justify-content: center; margin: -5px 0; }
@@ -124,7 +114,7 @@
 <div class="container">
     <h1 class="app-title">Unicorni Meteoropatici</h1>
     <div class="weather-box">
-        <div id="w-location" class="location">Localizzazione...</div>
+        <div class="location">Piove di Sacco</div>
         <div class="main-weather">
             <div id="icon-main" class="weather-icon-main"></div>
             <p id="w-temp" class="temp">--°</p>
@@ -182,7 +172,7 @@
                     "Finalmente il cielo ha il colore giusto. Gli amanti del sole dovrebbero vergognarsi.",
                     "Umidità perfetta. È uno spettacolo vedere la gente correre al riparo con quelle facce ridicole.",
                     "Questo grigio è poesia pura. Gli altri non possono capire, sono troppo impegnati a sorridere a caso.",
-                    "Cielo coperto: la protezione ideale anticancerogena contro l'inutile ottimismo solare della massa.",
+                    "Cielo coperto: la protezione ideale contro l'inutile ottimismo solare della massa.",
                     "Il mondo lavato via da ogni pretesa di allegria dei comuni mortali. Sublime."
                 ],
                 arrabbiato: () => [
@@ -400,45 +390,26 @@
         container.innerHTML = icone[meteo] || icone['Clouds'];
     }
 
-    function getWeatherData(lat, lon) {
-        const apiKey = 'eca827552d285d6fd2783dc704b52c48';
-        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=it`;
-        
-        fetch(url)
-            .then(r => r.json()).then(d => {
-                t = Math.round(d.main.temp);
-                m = d.weather[0].main;
-                document.getElementById('w-location').innerText = d.name;
-                document.getElementById('w-temp').innerText = t + "°";
-                document.getElementById('w-desc').innerText = d.weather[0].description;
-                document.getElementById('w-feels').innerText = Math.round(d.main.feels_like) + "°";
-                document.getElementById('w-hum').innerText = d.main.humidity + "%";
-                document.getElementById('w-wind').innerText = Math.round(d.wind.speed * 3.6) + " km/h";
-                setCustomIcon(m);
-                
-                const savedHero = localStorage.getItem('mioUnicorno');
-                if (savedHero) {
-                    const btns = document.querySelectorAll('.grid button');
-                    btns.forEach(b => { 
-                        if(b.innerText.toLowerCase().includes(savedHero)) seleziona(savedHero, b); 
-                    });
-                    if (localStorage.getItem('confermato') === 'true') conferma();
-                }
-            })
-            .catch(() => {
-                document.getElementById('w-location').innerText = "Errore caricamento";
-            });
-    }
-
-    // Geocalizzazione automatica
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (pos) => getWeatherData(pos.coords.latitude, pos.coords.longitude),
-            () => getWeatherData(45.3429, 12.0361) // Fallback: Piove di Sacco
-        );
-    } else {
-        getWeatherData(45.3429, 12.0361);
-    }
+    fetch('https://api.openweathermap.org/data/2.5/weather?q=Piove di Sacco&appid=eca827552d285d6fd2783dc704b52c48&units=metric&lang=it')
+        .then(r => r.json()).then(d => {
+            t = Math.round(d.main.temp);
+            m = d.weather[0].main;
+            document.getElementById('w-temp').innerText = t + "°";
+            document.getElementById('w-desc').innerText = d.weather[0].description;
+            document.getElementById('w-feels').innerText = Math.round(d.main.feels_like) + "°";
+            document.getElementById('w-hum').innerText = d.main.humidity + "%";
+            document.getElementById('w-wind').innerText = Math.round(d.wind.speed * 3.6) + " km/h";
+            setCustomIcon(m);
+            
+            const savedHero = localStorage.getItem('mioUnicorno');
+            if (savedHero) {
+                const btns = document.querySelectorAll('.grid button');
+                btns.forEach(b => { 
+                    if(b.innerText.toLowerCase().includes(savedHero)) seleziona(savedHero, b); 
+                });
+                if (localStorage.getItem('confermato') === 'true') conferma();
+            }
+        });
 
     function accettaDisclaimer() {
         document.getElementById('disclaimer-overlay').style.display = 'none';
@@ -458,6 +429,7 @@
         identikit.style.display = "block";
         document.getElementById('char-img').src = nome + ".png";
         
+        // Gestione pulsante speciale per Bloodmoon e Umbra
         if (nome === 'bloodmoon' || nome === 'umbra') {
             confirmBtn.innerHTML = `Evocami a 19,99€<br><span style="font-size: 0.85rem; color: #39FF14; font-weight: normal; text-shadow: 0 0 5px rgba(57, 255, 20, 0.5);">Sbloccabile durante un eclissi reale a 2,99€</span>`;
             confirmBtn.disabled = true;

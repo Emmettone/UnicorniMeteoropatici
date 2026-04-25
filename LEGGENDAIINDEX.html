@@ -43,28 +43,7 @@
         .legal-notice { font-size: 0.7rem !important; color: #888 !important; border-top: 1px solid #333; padding-top: 15px; margin-top: 15px; font-style: normal; }
         #accept-disclaimer { width: 100%; padding: 15px; background: #ff4757; color: white; border: none; border-radius: 15px; font-weight: 900; cursor: pointer; font-size: 1rem; margin-top: 10px; }
 
-        @keyframes magicGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .app-title { 
-            font-family: 'Brush Script MT', 'Dancing Script', cursive;
-            font-size: 2.2rem; 
-            font-weight: normal; 
-            font-style: italic;
-            text-transform: none; 
-            letter-spacing: 1px; 
-            margin: 10px 0 20px 0; 
-            background: linear-gradient(270deg, #ff4757, #ffa502, #ff4757, #7d5fff); 
-            background-size: 400% 400%;
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            animation: magicGradient 6s ease infinite;
-            text-shadow: 0 0 15px rgba(255, 71, 87, 0.2);
-        }
-
+        .app-title { font-size: 1.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin: 10px 0 20px 0; background: linear-gradient(to right, #ff4757, #ffa502); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .weather-box { background: linear-gradient(145deg, #1e1e1e, #111111); padding: 15px 10px; border-radius: 28px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
         .location { font-size: 0.8rem; color: #ff4757; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; margin: 0; line-height: 1; }
         .main-weather { display: flex; align-items: center; justify-content: center; margin: -5px 0; }
@@ -91,8 +70,7 @@
         .value-pref { color: #ff4757; flex-grow: 1; text-align: center; font-weight: 800; text-transform: uppercase; }
         .char-description { background: #f8f9fa; border-radius: 15px; padding: 15px; margin-bottom: 20px; border-left: 5px solid #ff4757; font-size: 0.9rem; line-height: 1.4; color: #444; font-style: italic; }
         .mood-bubble { background: #1e272e; color: white; padding: 15px; border-radius: 20px; font-style: italic; margin-bottom: 15px; text-align: center; font-weight: bold; line-height: 1.4; display: none; }
-        #confirm-btn { width: 100%; padding: 18px; background: #2ed573; color: white; border: none; border-radius: 20px; font-size: 1.1rem; font-weight: bold; line-height: 1.2; }
-        #confirm-btn:disabled { background: #555; cursor: not-allowed; opacity: 0.8; }
+        #confirm-btn { width: 100%; padding: 18px; background: #2ed573; color: white; border: none; border-radius: 20px; font-size: 1.1rem; font-weight: bold; }
         
         .bg-felice { background: #002b16 !important; }
         .bg-arrabbiato { background: #3d0000 !important; }
@@ -124,7 +102,7 @@
 <div class="container">
     <h1 class="app-title">Unicorni Meteoropatici</h1>
     <div class="weather-box">
-        <div id="w-location" class="location">Localizzazione...</div>
+        <div class="location">Piove di Sacco</div>
         <div class="main-weather">
             <div id="icon-main" class="weather-icon-main"></div>
             <p id="w-temp" class="temp">--°</p>
@@ -156,8 +134,6 @@
         <button onclick="seleziona('gelo', this)">Gelo</button>
         <button onclick="seleziona('brina', this)">Brina</button>
         <button onclick="seleziona('dusty', this)">Dusty</button>
-        <button onclick="seleziona('bloodmoon', this)">Bloodmoon<br><span style="color: gold; font-size: 0.55rem; font-weight: 900; text-transform: uppercase;">Leggendario</span></button>
-        <button onclick="seleziona('umbra', this)">Umbra<br><span style="color: gold; font-size: 0.55rem; font-weight: 900; text-transform: uppercase;">Leggendario</span></button>
     </div>
 
     <div id="identikit" class="card">
@@ -182,14 +158,24 @@
                     "Finalmente il cielo ha il colore giusto. Gli amanti del sole dovrebbero vergognarsi.",
                     "Umidità perfetta. È uno spettacolo vedere la gente correre al riparo con quelle facce ridicole.",
                     "Questo grigio è poesia pura. Gli altri non possono capire, sono troppo impegnati a sorridere a caso.",
-                    "Cielo coperto: la protezione ideale anticancerogena contro l'inutile ottimismo solare della massa.",
-                    "Il mondo lavato via da ogni pretesa di allegria dei comuni mortali. Sublime."
+                    "Cielo coperto: la protezione ideale contro l'inutile ottimismo solare della massa.",
+                    "Il mondo lavato via da ogni pretesa di allegria dei comuni mortali. Sublime.",
+                    "Che bello vedere le strade vuote. Se la gente resta al chiuso, fa un favore all'estetica.",
+                    "Niente sole, niente sorrisi ebete. Che pace senza l'euforia immotivata dei passanti.",
+                    "Le nuvole sono l'unico filtro che regge contro la mediocrità circostante.",
+                    "Oggi il mondo è quasi tollerabile. Peccato che la gente sia ancora in giro a respirare.",
+                    "Questo clima scoraggia gli imbecilli dal voler socializzare. Ottimo."
                 ],
                 arrabbiato: () => [
                     "Questa luce è volgare. Sembra che l'universo abbia lasciato accesa la lampadina per gli stupidi.",
                     "Che fastidio questo bagliore. Gli altri sono tutti troppo visibili oggi, dovrebbero nascondersi.",
                     "Qualcuno spenga questa palla di fuoco, l'allegria altrui è soffocante.",
                     "Un altro giorno luminoso, un altro giorno di banalità celebrata da chi non ha pensieri.",
+                    "Perché la gente è così contenta? È solo luce. Sono dei vegetali in cerca di fotosintesi?",
+                    "Questa temperatura mette a nudo la pochezza intellettuale dei bagnanti.",
+                    "Il riflesso del sole sulle facce soddisfatte del nulla è irritante.",
+                    "Serve un velo di tristezza e invece c'è questa chiarezza oscena per menti semplici.",
+                    "L'azzurro del cielo è di un cattivo gusto estremo, proprio come i gusti della massa.",
                     "Speriamo in un blackout atmosferico, vedere gli altri così chiaramente è un supplizio."
                 ],
                 neutro: () => Array(10).fill("Meteo mediocre per una popolazione mediocre. Restassero pure nell'anonimato.")
@@ -201,16 +187,26 @@
             sarcasmo: {
                 felice: () => [
                     "Luce divina! Finalmente le talpe depresse che amano il grigio devono nascondersi.",
-                    "Il cielo splende per noi. Gli altri restino nell'ombra dove la loro banalità merita di stare.",
+                    "Il cielo splende per me. Gli altri restino nell'ombra dove la loro banalità merita di stare.",
                     "Il sole è un riflettore personale, gli altri sono solo comparse mal vestite.",
                     "L'oro del cielo riflette la superiorità sulla massa dei mediocri.",
+                    "Luce pura. La gente sarà invidiosa di questa classe innata?",
+                    "Oggi lo splendore è totale, i poveri tristi farebbero meglio a non guardare.",
+                    "Giornata luminosa per menti brillanti. Peccato per tutti gli altri.",
+                    "Splendore totale. Gli sfigati che amano la pioggia vadano in letargo forzato.",
+                    "Chi ama il grigio oggi dimostra di avere la personalità di un sasso umido.",
                     "Il sole bacia i belli, infatti alla massa sta venendo l'eritema per il rifiuto."
                 ],
                 arrabbiato: () => [
                     "Chi ha spento la luce? Chi ama nascondersi in questo squallore opaco non ha stile.",
                     "Questo clima è il rifugio dei brutti che non vogliono farsi vedere dal mondo.",
                     "Questo grigiore è da plebei intellettuali. Ridateci la gloria.",
+                    "L'universo tenta di spegnere lo splendore? Patetico tentativo per compiacere i tristi.",
+                    "Il mondo è diventato opaco. Proprio come la conversazione standard della gente.",
                     "Dov'è il pubblico? Questo clima spegne il già scarso entusiasmo della massa.",
+                    "Un complotto per non far brillare chi merita. Le ombre inutili celebrano la nebbia.",
+                    "Manca la luce, manca lo stile. Sono tutti così... spenti e insignificanti.",
+                    "Questo meteo è un insulto all'immagine pubblica e al buon gusto.",
                     "La gente è felice di non vedere lo splendore? Sono dei falliti amanti dell'oscurità."
                 ],
                 neutro: () => Array(10).fill("Non splende abbastanza. Colpa della mediocrità circostante che assorbe la luce.")
@@ -223,15 +219,25 @@
                 felice: () => [
                     "Schiattassero! È un piacere vedere i neuroni dei fanatici del fresco che friggono.",
                     "Cottura lenta per tutti. Finalmente un calore che purifica il mondo dai deboli.",
-                    "Il condizionatore è la droga dei falliti. Brucino di invidia mentre noi ce la godiamo.",
+                    "Il condizionatore è la droga dei falliti. Brucino di invidia mentre qui si ride.",
                     "Il mondo si liquefa sotto il potere del fuoco. Gli altri sono solo burro.",
+                    "Bel calore. Almeno oggi la gente non sembra composta da cadaveri congelati.",
+                    "Giornata incandescente, ottima per chi vive davvero. Gli altri tremino pure.",
+                    "Splendido. Gli sfigati che amano il gelo staranno sudando l'anima, se ne hanno una.",
+                    "Quando la temperatura sale, la dignità della massa scende proporzionalmente.",
+                    "Cielo perfetto per chi ha il fuoco dentro. Voi siete solo cenere bagnata.",
                     "La gente si lamenta del caldo, ma le lacrime evaporano subito. Che agonia deliziosa."
                 ],
                 arrabbiato: () => [
                     "Sento un freddo volgare. Chi ha lasciato aperto il congelatore per far contenti gli incapaci?",
                     "Chiunque ami questa temperatura da obitorio è morto dentro e si vede.",
+                    "Servono fiamme, non questo gelo per bambini paurosi del calore vero.",
                     "Riscaldamento globale, muoviti! Qui si gela in mezzo a questi pinguini umani.",
+                    "Il fresco è la stagione di chi non ha calore interno. Gusci vuoti e gelidi.",
+                    "Questa temperatura spegne l'umore. Le amebe celebrano il brivido.",
+                    "Fastidio estremo. Perché non brucia tutto? Sono tutti troppo occupati a coprirvi.",
                     "Sentirsi spenti è atroce. Sono tutti così pallidi e felici in questo schifo di freddo.",
+                    "Serve il calore che deforma i pensieri, non questo brivido plebeo che la gente ama.",
                     "La massa è contenta di stare al fresco? Piante grasse senza alcuna ambizione."
                 ],
                 neutro: () => Array(10).fill("Tiepido. Un meteo senza carattere per gente senza spina dorsale.")
@@ -243,16 +249,26 @@
             sarcasmo: {
                 felice: () => [
                     "Finalmente l'aria taglia la faccia. Chi non lo regge dovrebbe sparire dalla vista.",
-                    "Il freddo conserva, il caldo fa marcire il cervello altrui. E i risultati si vede.",
+                    "Il freddo conserva, il caldo fa marcire il cervello altrui. E i risultati si vedono.",
                     "La scarsa dignità della gente scricchiola sul ghiaccio oggi. Che suono delizioso.",
                     "Morte al sole e ai fanatici che lo venerano come amebe tropicali senza cervello.",
-                    "Quando la temperatura scende sotto lo zero, raggiunge il quoziente intellettivo della massa."
+                    "Finalmente il fresco mette a tacere gli amanti dell'estate e delle loro sudate.",
+                    "Il gelo è l'unica cosa pura in questo mondo che scotta di mediocrità.",
+                    "Atmosfera gelida, ideale per chi ha un cuore di pietra e non sopporta gli abbracci altrui.",
+                    "Il fiato della gente è visibile nell'aria. Almeno così si sa che sono vivi, purtroppo.",
+                    "Quando la temperatura scende sotto lo zero, raggiunge il quoziente intellettivo della massa.",
+                    "Le lucertole sudate e banali dovrebbero inchinarsi al regno di ghiaccio."
                 ],
                 arrabbiato: () => [
                     "Fa caldo. C'è puzza di ascelle e ottimismo estivo da quattro soldi. Disgustoso.",
                     "Il sole è il cancro del mondo. La gente farebbe meglio a nascondersi nelle caverne.",
                     "Odore di estate, viene da vomitare sull'abbronzatura ridicola della gente.",
+                    "Perché l'aria scotta? Sono tutti così sudati e privi di classe.",
+                    "Serve un iceberg prima che tutto si sciolga per l'orrore di vedere gli altri felici.",
+                    "La gente è felice per il sole? Sono dei vegetali senza alcuna ambizione superiore.",
                     "Questo calore rovina la perfezione. I barbari amanti del sudore sono ovunque.",
+                    "Questo azzurro tropicale da villaggio vacanze è un insulto. Che schifo di gusto.",
+                    "La luce irrita, il calore offende. Sparissero tutti nelle spiagge affollate.",
                     "Il mare chiama? Ci andassero e restassero a fondo per sempre."
                 ],
                 neutro: () => Array(10).fill("Fresco? È solo un insulto al vero gelo. Tutti esseri tiepidi.")
@@ -266,14 +282,24 @@
                     "Tutto piatto. Finalmente gli amanti del sole non hanno scuse per sorridere.",
                     "Il grigio è l'unico colore per chi ha un cervello e non ha bisogno di luci.",
                     "Niente ombre moleste. Il mondo è piatto come la conversazione abituale della gente.",
+                    "Morbida coltre per coprire la bruttezza circostante. Grazie cielo per questo velo.",
                     "L'ottimismo è morto sotto questo strato di nuvole. È una gioia vederlo soffocare.",
-                    "Bello quando il cielo si dimentica di brillare. Proprio come le carriere dei passanti."
+                    "Cielo coperto, anima libera dal peso dell'entusiasmo irritante altrui.",
+                    "Le nuvole sono lo scudo perfetto contro gli idioti che adorano la tintarella.",
+                    "Bello quando il cielo si dimentica di brillare. Proprio come le carriere dei passanti.",
+                    "Niente luce diretta, niente verità scomode. Restino tutti nel vago dell'ignoranza.",
+                    "Il mondo sembra un ufficio postale in sciopero. Un paradiso personale."
                 ],
                 arrabbiato: () => [
                     "Troppo rumore, troppa luce. Gli altri sono degli isterici senza controllo.",
                     "I contrasti forti sono odiosi. Perché la gente deve essere così drammatica per il sole?",
+                    "Meteo per chi ha bisogno di scariche elettriche per sentirsi vivo. Poveracci.",
                     "C'è troppa vitalità nell'aria. La voglia di fare della gente dà il voltastomaco.",
+                    "C'è troppa luce, ci si sente esposti al giudizio degli idioti che amano guardare.",
                     "Il sole mette in evidenza i difetti strutturali della gente. Si coprano subito.",
+                    "Qualcuno tiri le tende su questo cielo osceno e rumoroso, per pietà.",
+                    "Serve il silenzio del grigio, non questo caos climatico che eccita i semplici.",
+                    "La gente è eccitata per questo meteo? Bambini iperattivi e fastidiosi.",
                     "Ridateci la noia perenne. L'eccitazione solare della massa uccide l'anima."
                 ],
                 neutro: () => Array(10).fill("Cielo indeciso, come la morale flessibile della gente. Inutile.")
@@ -286,15 +312,25 @@
                 felice: () => [
                     "Oscurità e rumore: la ninna nanna perfetta per far paura agli idioti.",
                     "La scarica elettrica esalta, mentre gli altri tremano sotto il letto come conigli.",
+                    "Il cielo è furioso, ridiamo degli ombrelli che volano via insieme ai sogni della gente.",
                     "Trema tutto. Finalmente la natura ricorda alla massa quanto sia nulla.",
+                    "Adoro il panico della gente che scappa. Corrano pure, piccoli insetti spaventati.",
                     "Il buio luminoso della tempesta pulisce il mondo dai sognatori di serie B.",
-                    "Finalmente un meteo con un briciolo di cattiveria. Gli altri sono troppo teneri."
+                    "Fulmini e saette: l'unico linguaggio che quelle capre riescono a percepire.",
+                    "Speriamo che il prossimo colpo distrugga la preziosa connessione Wi-Fi della gente.",
+                    "Finalmente un meteo con un briciolo di cattiveria. Gli altri sono troppo teneri.",
+                    "Il rombo dei tuoni è perfetto, copre le stupide lamentele quotidiane dei passanti."
                 ],
                 arrabbiato: () => [
                     "Cielo azzurro e uccellini. Servirebbe un cannone per entrambi, e per la gente.",
                     "Ridateci la tempesta, questo silenzio solare uccide di noia profonda.",
                     "Questo sole è una tortura per chi ha carattere. Sono tutti così docili là fuori.",
+                    "Il sereno è per i rassegnati che amano la schiavitù della luce. Vite inutili.",
+                    "Niente luce, grazie. Il buio elettrico è meglio dei sorrisi finti della massa.",
+                    "Troppa pace là fuori. Fa venire voglia di distruggere i giardini perfetti dei vicini.",
                     "Senza tuoni c'è il vuoto. Le voci della gente sono ronzii che meritano un fulmine.",
+                    "Servirebbe un cataclisma che colpisca questa giornata perfetta. Subito.",
+                    "La gente è felice per il sole? Sono solo comparse in un film per bambini.",
                     "Il sereno mette a nudo l'inutilità esistenziale della massa. Si nascondano bene."
                 ],
                 neutro: () => Array(10).fill("Calma piatta. Che delusione climatica. Una noia mortale.")
@@ -306,16 +342,24 @@
             sarcasmo: {
                 felice: () => [
                     "Tutto candido. Finalmente il fango dei fanatici del caldo è coperto dal silenzio.",
+                    "Bianco assoluto. Il gelo soffoca le lamentele inutili della gente per il freddo.",
                     "Il regno dei ghiacci è qui. Inchinarsi o scivolare con la solita scarsa eleganza.",
-                    "Tutto è immobile. Il movimento frenetico è per gli umani volgari, non per noi.",
+                    "Aria gelida, finalmente un po' di contegno climatico per la gente sguaiata.",
+                    "Il mondo è un gioiello di ghiaccio, gli altri sono solo polvere che lo sporca.",
+                    "Tutto è immobile. Il movimento frenetico è per gli unicorni e gli umani volgari.",
+                    "Siamo gli unici a capire la bellezza, gli amanti del mare sono solo sporchi.",
+                    "Gelo e silenzio. La perfezione che i cervelli rumorosi della massa non meriteranno mai.",
                     "Bello quando la temperatura scende e la gente sparisce terrorizzata dalle strade.",
                     "Finalmente l'aria è pura. Il calore fa marcire i pensieri altrui e si vede."
                 ],
                 arrabbiato: () => [
                     "Sento un calore volgare. Il mondo perfetto si sta sciogliendo per colpa della gente.",
                     "Maledetta temperatura tiepida, distrugge la classe del gelo per far felice la massa.",
+                    "Ridateci il freddo vero, questo clima è per persone senza dignità né spina dorsale.",
                     "Il calore mette a nudo la mediocrità estiva della gente. Fanno sinceramente schifo.",
                     "Gli altri sono contenti di questo clima? Esseri primordiali attratti dal fuoco.",
+                    "Odio dover condividere l'aria con chi ama questa luce oscena e banale.",
+                    "Il fastidio è proporzionale alla ridicola voglia della gente di andare in spiaggia.",
                     "Qualcuno spenga questa pioggia, è di un cattivo gusto estremo, proprio come la massa."
                 ],
                 neutro: () => Array(10).fill("Manca il tocco finale di classe. Sono tutti troppo tiepidi e prevedibili.")
@@ -327,61 +371,29 @@
             sarcasmo: {
                 felice: () => [
                     "Invisibilità! Finalmente non si devono vedere le facce poco intelligenti della gente.",
+                    "Si vede solo quello che si vuole: nulla. Proprio come il futuro lavorativo altrui.",
                     "Privacy climatica. Si può ignorare la gente con una scusa valida e non vederla più.",
+                    "La nebbia è una coperta, gli altri restino pure fuori a cercare la luce come fessi.",
                     "Svaniti nel nulla. Il mondo è pulito quando è invisibile agli occhi della massa.",
+                    "Niente sguardi indiscreti. La gente è troppo insignificante per essere notata.",
                     "Questo vapore soffoca l'inutile ottimismo di plastica dei passanti.",
+                    "Il mistero è servito. Sarebbe bello se la gente si fosse persa per sempre lì fuori.",
+                    "Oggi il mondo è un segreto. Peccato che la massa sia così banale da non capirlo.",
                     "Non vedere nessuno è la sensazione di pace più bella che si possa provare."
                 ],
                 arrabbiato: () => [
                     "Troppa visibilità! Esposizione totale allo squallore quotidiano della gente.",
+                    "Luce accecante, il peggior nemico insieme all'allegria da stadio della massa.",
                     "Chi ha rimosso il velo? Bisogna nascondersi da questo schifo di società.",
                     "Il sole mette a nudo quanto la gente sia mediocre e mal vestita. Si coprano.",
+                    "Sentirsi nudi sotto questa luce è atroce. I guardoni climatici non hanno ritegno.",
+                    "C'è troppa gente oggi. Qualcuno tiri una tenda su questo scenario penoso.",
                     "L'orizzonte libero è odioso, fa vedere quanto gli altri siano piccoli e inutili.",
+                    "Ridateci l'ombra, la luce è solo per le persone vuote come le loro teste.",
+                    "Questo sereno è un'aggressione frontale alla privacy e all'umore.",
                     "La gente è felice di guardare? Odio dover guardare loro. Spariscano subito."
                 ],
                 neutro: () => Array(10).fill("Vedo non vedo. Un po' come l'intelligenza della massa: latitante.")
-            }
-        },
-        bloodmoon: {
-            bio: "Bloodmoon non aspetta il domani, aspetta la fine. Vede nel rosso del cielo il presagio che tutti gli altri ignorano.",
-            ama: "Eclissi Lunare", gradisce: "", nonGradisce: "", odia: "Eclissi Solare",
-            sarcasmo: {
-                felice: () => [
-                    "Finalmente il cielo promette rovina. Mentre gli altri si riparano, noi ci godiamo lo spettacolo del crollo.",
-                    "Elettricità e presagi. Un'atmosfera che le amebe solari non potrebbero mai comprendere.",
-                    "Il rombo del tuono mette a tacere le chiacchiere inutili della massa. Un sollievo.",
-                    "Cielo apocalittico. Il nostro momento è arrivato, gli altri possono solo tremare.",
-                    "Adoro quando la natura ringhia. Fa sentire i comuni mortali piccoli quanto sono realmente."
-                ],
-                arrabbiato: () => [
-                    "Un sole banale per gente banale. Dov'è la fine dei tempi quando serve?",
-                    "Questo azzurro è stucchevole. Manca il presagio, manca il pathos, manca tutto.",
-                    "Troppa luce. Sembra che l'universo abbia deciso di celebrare la mediocrità oggi.",
-                    "Il sereno è l'oppio dei popoli che non sanno guardare l'abisso. Che noia.",
-                    "Vedere le facce sorridenti dei passanti sotto questo sole è una tortura."
-                ],
-                neutro: () => Array(10).fill("Né tenebra né apocalisse. Una mediocrità che riflette il quoziente intellettivo globale.")
-            }
-        },
-        umbra: {
-            bio: "Umbra scivola tra le pieghe della realtà. Dove gli altri cercano la luce, lei trova il conforto dell'ombra.",
-            ama: "Eclissi Solare", gradisce: "", nonGradisce: "", odia: "Eclissi Lunare",
-            sarcasmo: {
-                felice: () => [
-                    "Il mondo scompare. Restiamo solo noi, invisibili a quella massa di curiosi senza scopo.",
-                    "Privacy assoluta. Finalmente l'oscurità cancella l'esistenza degli altri. Meraviglioso.",
-                    "Contorni sfocati per menti che non hanno bisogno di certezze grossolane come il sole.",
-                    "Siamo ombre tra le ombre. Un privilegio che i fanatici della tintarella non avranno mai.",
-                    "Il sole cancellato è l'unica forma di eleganza rimasta in questo mondo di esibizionisti."
-                ],
-                arrabbiato: () => [
-                    "Luce ovunque. L'universo vuole costringerci a guardare in faccia la mediocrità altrui.",
-                    "Troppa esposizione. Gli altri ci guardano, e peggio ancora, noi dobbiamo guardare loro.",
-                    "Il sole è un riflettore puntato sul nulla cosmico che è la società moderna.",
-                    "Odio questa chiarezza. Mette in risalto la bruttezza dei pensieri e dei vestiti della gente.",
-                    "Tutti visibili, tutti rumorosi, tutti inutili. Dov'è la mia coltre di oscurità?"
-                ],
-                neutro: () => Array(10).fill("Luce diffusa, come il senso critico della popolazione: scarso e poco incisivo.")
             }
         }
     };
@@ -389,7 +401,7 @@
     function setCustomIcon(meteo) {
         const container = document.getElementById('icon-main');
         const icone = {
-            'Clear': `<svg viewBox="0 0 24 24"><path fill="#f1c40f" d="M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7M12,2L14.39,5.42L18.42,4.38L17.38,8.41L20.81,10.81L17.38,13.21L18.42,17.24L14.39,16.2L12,19.61L9.61,16.2L5.58,17.24L6.62,13.21L3.19,10.81L6.62,8.41L5.58,4.38L9.91,6.24L12,2Z"/></svg>`,
+            'Clear': `<svg viewBox="0 0 24 24"><path fill="#f1c40f" d="M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7M12,2L14.39,5.42L18.42,4.38L17.38,8.41L20.81,10.81L17.38,13.21L18.42,17.24L14.39,16.2L12,19.61L9.61,16.2L5.58,17.24L6.62,13.21L3.19,10.81L6.62,8.41L5.58,4.38L9.61,5.42L12,2Z"/></svg>`,
             'Clouds': `<svg viewBox="0 0 24 24"><path fill="#ecf0f1" d="M19.35,10.03C18.67,6.59 15.64,4 12,4C9.11,4 6.6,5.64 5.35,8.03C2.34,8.36 0,10.9 0,14A6,6 0 0,0 6,20H19A5,5 0 0,0 24,15C24,12.36 21.95,10.22 19.35,10.03Z"/></svg>`,
             'Rain': `<svg viewBox="0 0 24 24"><path fill="#3498db" d="M12,2L4.5,20.29L5.21,21L12,18L18.79,21L19.5,20.29L12,2Z"/></svg>`,
             'Thunderstorm': `<svg viewBox="0 0 24 24"><path fill="#f1c40f" d="M7,2V13H10V22L17,10H13L17,2H7Z"/></svg>`,
@@ -400,45 +412,24 @@
         container.innerHTML = icone[meteo] || icone['Clouds'];
     }
 
-    function getWeatherData(lat, lon) {
-        const apiKey = 'eca827552d285d6fd2783dc704b52c48';
-        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=it`;
-        
-        fetch(url)
-            .then(r => r.json()).then(d => {
-                t = Math.round(d.main.temp);
-                m = d.weather[0].main;
-                document.getElementById('w-location').innerText = d.name;
-                document.getElementById('w-temp').innerText = t + "°";
-                document.getElementById('w-desc').innerText = d.weather[0].description;
-                document.getElementById('w-feels').innerText = Math.round(d.main.feels_like) + "°";
-                document.getElementById('w-hum').innerText = d.main.humidity + "%";
-                document.getElementById('w-wind').innerText = Math.round(d.wind.speed * 3.6) + " km/h";
-                setCustomIcon(m);
-                
-                const savedHero = localStorage.getItem('mioUnicorno');
-                if (savedHero) {
-                    const btns = document.querySelectorAll('.grid button');
-                    btns.forEach(b => { 
-                        if(b.innerText.toLowerCase().includes(savedHero)) seleziona(savedHero, b); 
-                    });
-                    if (localStorage.getItem('confermato') === 'true') conferma();
-                }
-            })
-            .catch(() => {
-                document.getElementById('w-location').innerText = "Errore caricamento";
-            });
-    }
-
-    // Geocalizzazione automatica
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (pos) => getWeatherData(pos.coords.latitude, pos.coords.longitude),
-            () => getWeatherData(45.3429, 12.0361) // Fallback: Piove di Sacco
-        );
-    } else {
-        getWeatherData(45.3429, 12.0361);
-    }
+    fetch('https://api.openweathermap.org/data/2.5/weather?q=Piove di Sacco&appid=eca827552d285d6fd2783dc704b52c48&units=metric&lang=it')
+        .then(r => r.json()).then(d => {
+            t = Math.round(d.main.temp);
+            m = d.weather[0].main;
+            document.getElementById('w-temp').innerText = t + "°";
+            document.getElementById('w-desc').innerText = d.weather[0].description;
+            document.getElementById('w-feels').innerText = Math.round(d.main.feels_like) + "°";
+            document.getElementById('w-hum').innerText = d.main.humidity + "%";
+            document.getElementById('w-wind').innerText = Math.round(d.wind.speed * 3.6) + " km/h";
+            setCustomIcon(m);
+            
+            const savedHero = localStorage.getItem('mioUnicorno');
+            if (savedHero) {
+                const btns = document.querySelectorAll('.grid button');
+                btns.forEach(b => { if(b.innerText.toLowerCase() === savedHero) seleziona(savedHero, b); });
+                if (localStorage.getItem('confermato') === 'true') conferma();
+            }
+        });
 
     function accettaDisclaimer() {
         document.getElementById('disclaimer-overlay').style.display = 'none';
@@ -453,26 +444,12 @@
         if(btn) btn.classList.add('active');
         
         const u = db[nome];
-        const identikit = document.getElementById('identikit');
-        const confirmBtn = document.getElementById('confirm-btn');
-        identikit.style.display = "block";
+        document.getElementById('identikit').style.display = "block";
         document.getElementById('char-img').src = nome + ".png";
         
-        if (nome === 'bloodmoon' || nome === 'umbra') {
-            confirmBtn.innerHTML = `Evocami a 19,99€<br><span style="font-size: 0.85rem; color: #39FF14; font-weight: normal; text-shadow: 0 0 5px rgba(57, 255, 20, 0.5);">Sbloccabile durante un eclissi reale a 2,99€</span>`;
-            confirmBtn.disabled = true;
-        } else {
-            confirmBtn.innerText = "SCELGO TE";
-            confirmBtn.disabled = false;
-        }
-
         const definiti = [u.ama, u.gradisce, u.nonGradisce, u.odia];
         let neutri = condizioniTutte.filter(c => !definiti.includes(c));
         
-        if (nome === 'bloodmoon' || nome === 'umbra') {
-            neutri = [];
-        }
-
         if (nome === 'brina') {
             if (!neutri.includes('Sole')) neutri.push('Sole');
             neutri = neutri.sort();
@@ -489,7 +466,7 @@
         document.getElementById('char-bio').innerText = u.bio;
         document.getElementById('char-bio').style.display = "block";
         document.getElementById('char-mood').style.display = "none";
-        confirmBtn.style.display = "block";
+        document.getElementById('confirm-btn').style.display = "block";
 
         reaction = 'neutro';
         const mc = { 'Clear': 'Sole', 'Rain': 'Pioggia', 'Clouds': 'Nuvole', 'Thunderstorm': 'Temporali', 'Mist': 'Nebbia', 'Fog': 'Nebbia', 'Snow': 'Neve' }[m] || 'Nuvole';
@@ -507,8 +484,6 @@
     }
 
     function conferma() {
-        if (selected === 'bloodmoon' || selected === 'umbra') return;
-        
         localStorage.setItem('confermato', 'true');
         document.getElementById('char-img').src = selected + reaction + ".png";
         document.body.className = 'bg-' + reaction;
